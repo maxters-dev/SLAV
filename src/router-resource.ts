@@ -141,7 +141,7 @@ const generateRoutesFromResources = (routeResources: ResourceRouteConfig[]) => {
 
   createRouteResources(routeResources).forEach((routeDicionary) => {
     for (const route of Object.values(routeDicionary)) {
-      if (route.meta.disabled === true) continue
+      if (route?.meta?.disabled === true) continue
       routes.push(route)
     }
   })
