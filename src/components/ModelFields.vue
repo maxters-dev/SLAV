@@ -53,9 +53,9 @@
 <script lang="ts">
 
 import Vue, { PropType } from 'vue'
-import { FieldConfig } from '@/types/schema'
-import { FieldResult } from '@/types/components/model'
-import { Model } from '@/types/laravel'
+import { FieldConfig } from '../types/schema'
+import { FieldResult } from '../types/components/model'
+import { Model } from '../types/laravel'
 
 export default Vue.extend({
   name: 'ModelFields',

@@ -1,4 +1,4 @@
-import { Model, Paginated, Payload } from '@/types/laravel'
+import { Model, Paginated, Payload } from '../types/laravel'
 import api from './api'
 
 class Resource {

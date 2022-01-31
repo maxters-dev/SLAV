@@ -1,5 +1,5 @@
-import { UnprocessableEntity } from '@/types/laravel'
-import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from 'axios'
+import { UnprocessableEntity } from '../types/laravel'
+import axios, { AxiosError, AxiosRequestConfig } from 'axios'
 import auth from './auth'
 import { EventBus } from './event-bus'
 

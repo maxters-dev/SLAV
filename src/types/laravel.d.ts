@@ -1,4 +1,9 @@
+/* eslint-disable camelcase */
 export type Payload = Record<string, number|string>;
+
+export type Model = {
+    id: number;
+} & Record<string, any>;
 
 export type Paginated = {
     total: number;
@@ -9,7 +14,3 @@ export type Paginated = {
 }
 
 export type UnprocessableEntity = Record<string, Record<string, string[]>>
-
-export type Model = {
-    id: number;
-} & Record<string, any>;

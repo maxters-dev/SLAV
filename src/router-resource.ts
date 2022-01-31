@@ -1,11 +1,17 @@
 import { kebabCase } from '@lukaspolak/kebab-case'
-import ModelIndex from '@/views/ModelIndex.vue'
-import ModelForm from '@/views/ModelForm.vue'
-import ModelShow from '@/views/ModelShow.vue'
-import Resource from '@/services/resource'
+import ModelIndex from './views/ModelIndex.vue'
+import ModelForm from './views/ModelForm.vue'
+import ModelShow from './views/ModelShow.vue'
+import Resource from './services/resource'
 import { RouteConfig } from 'vue-router'
-import { IndexRouteProps, ResourceActionNames, ResourceRouteConfig, RouteConfigResourceDictionary, ShowRouteProps } from '@/types/router'
-import store from '@/store'
+import store from './store'
+import {
+  IndexRouteProps,
+  ResourceActionNames,
+  ResourceRouteConfig,
+  RouteConfigResourceDictionary,
+  ShowRouteProps
+} from './types/router'
 
 const generateNames = (name: string): ResourceActionNames => ({
   create: `${name}Create`,
@@ -80,24 +86,24 @@ const createRouteResource = ({ formSchema, name, searchSchema, ...props }: Resou
     }
   }
 
-    type RouteResourceKey = keyof (typeof resourceRoutes);
+  type RouteResourceKey = keyof (typeof resourceRoutes);
 
-    for (const key in resourceRoutes) {
-      const callbackProps = props[key as RouteResourceKey]
-      if (typeof callbackProps !== 'function') continue
+  for (const key in resourceRoutes) {
+    const callbackProps = props[key as RouteResourceKey]
+    if (typeof callbackProps !== 'function') continue
 
-      const route = resourceRoutes[key as RouteResourceKey]
-      const resultProps = callbackProps(route.props as any)
-      Object.assign(route.props, resultProps)
-    }
+    const route = resourceRoutes[key as RouteResourceKey]
+    const resultProps = callbackProps(route.props as any)
+    Object.assign(route.props, resultProps)
+  }
 
-    store.sidebarItems.push({
-      title: resourceRoutes.index.props.pageTitle,
-      icon: props.icon || 'mdi-link',
-      to: { name: actionNames.index }
-    })
+  store.sidebarItems.push({
+    title: resourceRoutes.index.props.pageTitle,
+    icon: props.icon || 'mdi-link',
+    to: { name: actionNames.index }
+  })
 
-    return resourceRoutes
+  return resourceRoutes
 }
 
 const createRouteResources = (routeResources: ResourceRouteConfig[]) => {

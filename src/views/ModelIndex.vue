@@ -97,13 +97,13 @@
 
 <script lang="ts">
 
-import Resource from '@/services/resource'
-import ModelSearch from '@/components/ModelSearch.vue'
-import ModelListItem from '@/components/ModelListItem.vue'
-import AppDialogConfirm from '@/components/AppDialogConfirm.vue'
+import Resource from '../services/resource'
+import ModelSearch from '../components/ModelSearch.vue'
+import ModelListItem from '../components/ModelListItem.vue'
+import AppDialogConfirm from '../components/AppDialogConfirm.vue'
 import Vue, { PropType, VueConstructor } from 'vue'
-import { Model, Paginated } from '@/types/laravel'
-import { IndexRouteProps, ResourceActionNames } from '@/types/router'
+import { Model, Paginated } from '../types/laravel'
+import { IndexRouteProps, ResourceActionNames } from '../types/router'
 
 interface Refs
 {

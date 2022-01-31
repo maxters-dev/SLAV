@@ -34,7 +34,7 @@
 </template>
 
 <script lang="ts">
-import { SearchSchema } from '@/types/schema'
+import { SearchSchema } from '../types/schema'
 import Vue, { PropType } from 'vue'
 
 export default Vue.extend({

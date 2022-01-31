@@ -37,14 +37,14 @@
 <script lang="ts">
 
 import Vue, { PropType } from 'vue'
-import { EventBus } from '@/services/event-bus'
+import { EventBus } from '../services/event-bus'
 
-import { prepareFieldProperties } from '@/views/ModelForm'
-import Resource from '@/services/resource'
+import { prepareFieldProperties } from '../views/ModelForm'
+import Resource from '../services/resource'
 
 import AppDatePicker from '../components/AppDatePicker.vue'
 import { VAutocomplete, VTextField, VTextarea, VSelect, VChip, VSwitch } from 'vuetify/lib'
-import { InputSchema, InputSchemaProperties } from '@/types/schema'
+import { InputSchema, InputSchemaProperties } from '../types/schema'
 
 export default Vue.extend({
   name: 'ModelForm',

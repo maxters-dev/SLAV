@@ -1,4 +1,4 @@
-import { FieldConfig } from '@/types/schema'
+import { FieldConfig } from '../../types/schema'
 import moment from 'moment'
 
 const yesOrNot = (value: Boolean) => (value ? 'Sim' : 'Não')

@@ -21,10 +21,10 @@
 
 <script lang="ts">
 import Vue, { PropType } from 'vue'
-import Resource from '@/services/resource'
-import { FieldConfig } from '@/types/schema'
-import { Model } from '@/types/laravel'
-import ModelDescriptionList from '@/components/ModelDescriptionList.vue'
+import Resource from '../services/resource'
+import { FieldConfig } from '../types/schema'
+import { Model } from '../types/laravel'
+import ModelDescriptionList from '../components/ModelDescriptionList.vue'
 
 export default Vue.extend({
   name: 'ModelShow',

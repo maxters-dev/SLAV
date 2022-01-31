@@ -1,6 +1,6 @@
-import { titleCase } from '@/helpers'
-import { Model } from '@/types/laravel'
-import { InputSchemaProperties } from '@/types/schema'
+import { titleCase } from '../helpers'
+import { Model } from '../types/laravel'
+import { InputSchemaProperties } from '../types/schema'
 import Vue from 'vue'
 
 function prepareVSelectField (component: Vue, inputSchema: InputSchemaProperties) {
@@ -24,7 +24,9 @@ function prepareVSelectField (component: Vue, inputSchema: InputSchemaProperties
     inputSchema.items().then((items: Model[]) => {
       inputSchema.props.items = items
       component.$forceUpdate()
-    }).finally(() => inputSchema.props.loading = false)
+    }).finally(() => {
+      inputSchema.props.loading = false
+    })
   }
 }
 

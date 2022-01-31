@@ -1,5 +1,4 @@
 import Vue from 'vue'
-import { RouteConfig } from 'vue-router'
 import { Model } from './laravel'
 
 type InsideComponentParams = { model: Model, component: Vue };
@@ -22,7 +21,7 @@ export type InputSchemaProperties = {
     type?: string;
     component?: String | Function;
     listeners?: ((props: InsideComponentParams) => Record<string, Function>) | Record<string, Function>;
-    transformValue?: ((value) => value)
+    transformValue?: ((value: any) => any)
 } & Record<string, any>
 
 export type InputSchema = InputSchemaProperties | ((config: InsideComponentParams) => InputSchemaProperties);

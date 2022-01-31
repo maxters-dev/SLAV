@@ -1,4 +1,3 @@
-import Vue from 'vue'
 export type CommandButton = {
     icon: string;
     id: any;
