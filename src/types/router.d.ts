@@ -26,8 +26,8 @@ export type IndexRouteProps = {
     searchSchema: SearchSchema[],
     actionNames: ResourceActionNames,
     pageTitle: string;
-    itemTitleProp: string;
-    itemImageProp?: string;
+    itemTitleProp: string | ((value: any) => string);
+    itemImageProp?: string | ((value: any) => string);
 } & BaseRouteProps;
 
 export type SidebarItemConfig = {

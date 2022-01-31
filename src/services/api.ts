@@ -4,7 +4,7 @@ import auth from './auth'
 import { EventBus } from './event-bus'
 
 const api = axios.create({
-  baseURL: process.env.VUE_APP_SLAV_API_BASE || 'https://maxters.dev/api/',
+  baseURL: process.env.VUE_APP_SLAV_API_BASE,
   headers: { Accept: 'application/json' }
 })
 

@@ -1,24 +1,25 @@
 import api from './api'
 
 type AuthUser = {
-    name: string;
-    email: string;
-    // eslint-disable-next-line camelcase
-    api_token: string;
+  name: string;
+  email: string;
+  // eslint-disable-next-line camelcase
+  api_token: string;
 }
 
-const TOKEN_NAME = 'ToKen_LoginName_Da_Zoeira'
-
 export default {
+
+  tokenName: '@token',
+
   getToken (): string | null {
-    return localStorage.getItem(TOKEN_NAME)
+    return localStorage.getItem(this.tokenName)
   },
   setToken (value: string) {
-    localStorage.setItem(TOKEN_NAME, value)
+    localStorage.setItem(this.tokenName, value)
     return this
   },
   removeToken (): void {
-    localStorage.removeItem(TOKEN_NAME)
+    localStorage.removeItem(this.tokenName)
   },
   async getUser (): Promise<Record<string, any>> {
     return api.get('users/me')

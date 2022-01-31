@@ -104,12 +104,26 @@ import AppDialogConfirm from '../components/AppDialogConfirm.vue'
 import Vue, { PropType, VueConstructor } from 'vue'
 import { Model, Paginated } from '../types/laravel'
 import { IndexRouteProps, ResourceActionNames } from '../types/router'
+import { SearchSchema } from '@/types/schema'
 
 interface Refs
 {
     $refs: {
         confirm: InstanceType<typeof AppDialogConfirm>,
     }
+}
+
+function useStringOrCallback (
+  model: Model,
+  prop: IndexRouteProps['itemTitleProp'] | IndexRouteProps['itemImageProp']
+) : string | null {
+  if (typeof prop === 'function') {
+    return prop(model)
+  } else if (typeof prop === 'string') {
+    return model[prop]
+  }
+
+  return null
 }
 
 export default (Vue as VueConstructor<Vue & Refs>).extend({
@@ -137,11 +151,11 @@ export default (Vue as VueConstructor<Vue & Refs>).extend({
       required: true
     },
     itemTitleProp: {
-      type: String,
+      type: [String, Function] as PropType<IndexRouteProps['itemTitleProp']>,
       default: 'name'
     },
     itemImageProp: {
-      type: String,
+      type: Object as PropType<IndexRouteProps['itemImageProp']>,
       default: null
     },
 
@@ -151,7 +165,7 @@ export default (Vue as VueConstructor<Vue & Refs>).extend({
     },
 
     searchSchema: {
-      type: Array,
+      type: Array as PropType<SearchSchema[]>,
       default: () => []
     }
   },
@@ -175,10 +189,11 @@ export default (Vue as VueConstructor<Vue & Refs>).extend({
   },
 
   methods: {
+
     preparedModel (model: Model) {
       return {
-        title: model[this.itemTitleProp],
-        image: this.itemImageProp ? this.getImage(model) : null
+        title: useStringOrCallback(model, this.itemTitleProp),
+        image: useStringOrCallback(model, this.itemImageProp)
       }
     },
 
