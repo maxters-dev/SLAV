@@ -1,6 +1,6 @@
-import Vue from 'vue';
-import { RouteConfig } from 'vue-router';
-import { Model } from './laravel';
+import Vue from 'vue'
+import { RouteConfig } from 'vue-router'
+import { Model } from './laravel'
 
 type InsideComponentParams = { model: Model, component: Vue };
 

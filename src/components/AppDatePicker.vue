@@ -26,54 +26,56 @@
 </template>
 
 <script>
-import moment from 'moment';
+import moment from 'moment'
+import { VMenu, VTextField, VDatePicker } from 'vuetify/lib'
 
 export default {
 
-    model: {
-        prop: 'modelValue',
-        event: 'update:modelValue'
+  components: { VMenu, VTextField, VDatePicker },
+
+  model: {
+    prop: 'modelValue',
+    event: 'update:modelValue'
+  },
+
+  props: {
+    label: {
+      type: String,
+      default: null
     },
-
-
-    props: {
-        label: {
-            type: String,
-            default: null
-        },
-        modelValue: {
-            type: null,
-            default: null,
-        }
-    },
-
-    data() {
-        return {
-            menu: false,
-        }
-    },
-
-    computed: {
-
-        innerDateValue: {
-            set(value) {
-                this.$emit('update:modelValue', value)
-            },
-
-            get() {
-                const date = moment(this.modelValue);
-                return date.isValid() ? date.format('YYYY-MM-DD') : null
-            }
-        }
-    },
-
-    methods: {
-
-        setDate(value) {
-            this.$emit('update:modelValue', value);
-            this.menu = false;
-        },
+    modelValue: {
+      type: null,
+      default: null
     }
+  },
+
+  data () {
+    return {
+      menu: false
+    }
+  },
+
+  computed: {
+
+    innerDateValue: {
+      set (value) {
+        this.$emit('update:modelValue', value)
+      },
+
+      get () {
+        const date = moment(this.modelValue)
+        return date.isValid() ? date.format('YYYY-MM-DD') : null
+      }
+    }
+  },
+
+  methods: {
+
+    setDate (value) {
+      this.$emit('update:modelValue', value)
+      this.menu = false
+    }
+  }
 }
 </script>
 

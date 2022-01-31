@@ -1,19 +1,17 @@
-import { Model, Paginated, Payload } from '@/types/laravel';
+import { Model, Paginated, Payload } from '@/types/laravel'
 import api from './api'
 
-class Resource
-{
+class Resource {
     prefix: string;
 
     constructor (prefix: string) {
-        this.prefix = prefix;
+      this.prefix = prefix
     }
 
-    async create(payload: Payload) {
+    async create (payload: Payload) {
+      const { data } = await api.post(this.prefix, payload)
 
-        const { data } = await api.post(this.prefix, payload)
-
-        return data;
+      return data
     }
 
     /**
@@ -22,11 +20,10 @@ class Resource
      * @param {Object} payload
      * @returns {Object}
      */
-    async update(id: number, payload: Payload) {
+    async update (id: number, payload: Payload) {
+      const { data } = await api.put(`${this.prefix}/${id}`, payload)
 
-        const { data } = await api.put(`${this.prefix}/${id}`, payload)
-
-        return data;
+      return data
     }
 
     /**
@@ -34,11 +31,10 @@ class Resource
      * @param {Object} params
      * @returns
      */
-    async paginated(params: Record<string, number|string>): Promise<Paginated>
-    {
-        const { data } = await api.get(`${this.prefix}`, { params: { page: 1, ...params } })
+    async paginated (params: Record<string, number|string>): Promise<Paginated> {
+      const { data } = await api.get(`${this.prefix}`, { params: { page: 1, ...params } })
 
-        return data as Paginated;
+      return data as Paginated
     }
 
     /**
@@ -46,8 +42,8 @@ class Resource
      * @param {Number} id
      * @returns {void}
      */
-    async delete(id: number) {
-        await api.delete(`${this.prefix}/${id}`)
+    async delete (id: number) {
+      await api.delete(`${this.prefix}/${id}`)
     }
 
     /**
@@ -55,17 +51,16 @@ class Resource
      * @param {Object} payload
      * @returns
      */
-    async show(id: number): Promise<Model> {
+    async show (id: number): Promise<Model> {
+      const { data } = await api.get(`${this.prefix}/${id}`)
 
-        const { data } = await api.get(`${this.prefix}/${id}`);
-
-        return data as Model;
+      return data as Model
     }
 
-    async all(): Promise<Paginated['data']> {
-        const result = await this.paginated({})
+    async all (): Promise<Paginated['data']> {
+      const result = await this.paginated({})
 
-        return result.data;
+      return result.data
     }
 }
 

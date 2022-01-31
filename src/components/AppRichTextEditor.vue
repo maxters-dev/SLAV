@@ -89,108 +89,105 @@ import { CommandButton, generateButtons } from './AppRichTextEditor'
 import AppImageUpload from './AppImageUpload.vue'
 
 export default Vue.extend({
-    name: 'AppRichTextEditor',
+  name: 'AppRichTextEditor',
 
-    components: {
-        EditorContent,
-        AppImageUpload,
+  components: {
+    EditorContent,
+    AppImageUpload
+  },
+
+  props: {
+    value: {
+      type: String,
+      default: ''
     },
-
-    props: {
-        value: {
-            type: String,
-            default: '',
-        },
-        label: {
-            type: String,
-            default: ''
-        }
-    },
-
-    data(): { editor?: Editor, isHtmlMode: boolean, buttons: CommandButton[], dialogImage: boolean } {
-
-        const buttons = generateButtons();
-
-        buttons.push({
-            icon: 'mdi-image',
-            id: 'image',
-            handler: (focus: any) => {
-                console.log(focus)
-                // focus.setImage({ src: 'https://source.unsplash.com/8xznAGy4HcY/800x400' }).run
-                this.dialogImage = true;
-            }
-        })
-
-        return {
-            editor: undefined,
-            isHtmlMode: false as boolean,
-            buttons,
-            dialogImage: false,
-        }
-    },
-
-    computed: {
-        computedEditor(): Editor {
-            return this.editor as Editor;
-        },
-
-        modelValue: {
-            set(value: string) {
-                this.$emit('input', value);
-                this.computedEditor.commands.setContent(value, false)
-            },
-            get(): string {
-                return this.value
-            }
-        }
-    },
-
-    watch: {
-        value (value) {
-
-            const isSame = this.computedEditor.getHTML() === value
-
-            if (isSame) {
-                return
-            }
-
-            this.computedEditor.commands.setContent(value, false)
-        },
-    },
-
-    mounted() {
-        this.editor = new Editor({
-            content: this.value,
-            extensions: [
-                StarterKit,
-                Image
-            ],
-            onUpdate: () => {
-                this.$emit('input', this.computedEditor.getHTML())
-            },
-        })
-    },
-
-    beforeDestroy() {
-        this.computedEditor.destroy()
-    },
-
-    methods: {
-        isActiveButton (arg: any): boolean {
-            if (Array.isArray(arg)) {
-                return !!this.computedEditor.isActive(arg[0], arg[1]);
-            }
-
-            return !!this.computedEditor.isActive(arg)
-        },
-
-        handleSelectImage(imageFile: File) {
-            this.$emit('imageSelected', imageFile);
-        }
+    label: {
+      type: String,
+      default: ''
     }
+  },
+
+  data (): { editor?: Editor, isHtmlMode: boolean, buttons: CommandButton[], dialogImage: boolean } {
+    const buttons = generateButtons()
+
+    // buttons.push({
+    //   icon: 'mdi-image',
+    //   id: 'image',
+    //   handler: (focus: any) => {
+    //     console.log(focus)
+    //     // focus.setImage({ src: 'https://source.unsplash.com/8xznAGy4HcY/800x400' }).run
+    //     this.dialogImage = true
+    //   }
+    // })
+
+    return {
+      editor: undefined,
+      isHtmlMode: false as boolean,
+      buttons,
+      dialogImage: false
+    }
+  },
+
+  computed: {
+    computedEditor (): Editor {
+      return this.editor as Editor
+    },
+
+    modelValue: {
+      set (value: string) {
+        this.$emit('input', value)
+        this.computedEditor.commands.setContent(value, false)
+      },
+      get (): string {
+        return this.value
+      }
+    }
+  },
+
+  watch: {
+    value (value) {
+      const isSame = this.computedEditor.getHTML() === value
+
+      if (isSame) {
+        return
+      }
+
+      this.computedEditor.commands.setContent(value, false)
+    }
+  },
+
+  mounted () {
+    this.editor = new Editor({
+      content: this.value,
+      extensions: [
+        StarterKit,
+        Image
+      ],
+      onUpdate: () => {
+        this.$emit('input', this.computedEditor.getHTML())
+      }
+    })
+  },
+
+  beforeDestroy () {
+    this.computedEditor.destroy()
+  },
+
+  methods: {
+    isActiveButton (arg: any): boolean {
+      if (Array.isArray(arg)) {
+        return !!this.computedEditor.isActive(arg[0], arg[1])
+      }
+
+      return !!this.computedEditor.isActive(arg)
+    },
+
+    handleSelectImage (imageFile: File) {
+      this.$emit('imageSelected', imageFile)
+    }
+  }
 })
 </script>
-
 
 <style lang="scss" scoped>
 /* Basic editor styles */
@@ -198,7 +195,6 @@ export default Vue.extend({
 ::v-deep .ProseMirror {
 
     outline: none;
-
 
   > * + * {
     margin-top: 0.75em;

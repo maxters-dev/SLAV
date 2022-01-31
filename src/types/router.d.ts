@@ -1,5 +1,5 @@
-import Resource from '@/services/resource';
-import { FieldConfig, InputSchema, SearchSchema } from './schema';
+import Resource from '@/services/resource'
+import { FieldConfig, InputSchema, SearchSchema } from './schema'
 
 export type CrudRouteConfigCallback = (config: Record<string, any>) => Record<string, any>;
 

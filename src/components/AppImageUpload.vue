@@ -42,53 +42,52 @@
 <script>
 export default {
 
-    inheritAttrs: false,
-    props: {
-        name: {
-            type: String,
-            required: true,
-        },
-        src: {
-            type: [String],
-            default: null,
-        },
-        label: {
-            type: String,
-            required: true
-        }
+  inheritAttrs: false,
+  props: {
+    name: {
+      type: String,
+      required: true
     },
-
-    data() {
-        return {
-            internalSrc: null,
-        }
+    src: {
+      type: [String],
+      default: null
     },
-
-    watch: {
-        src: {
-            immediate: true,
-            handler(src) {
-                this.internalSrc = src;
-            }
-        }
-    },
-
-    methods: {
-
-        cleanup() {
-            this.internalSrc = null;
-            this.$emit('cleanup')
-        },
-
-        onSelect(value) {
-
-            const src = URL.createObjectURL(value)
-
-            this.internalSrc = src;
-
-            this.$emit('imageSelected', value);
-            this.$emit('selected', value)
-        },
+    label: {
+      type: String,
+      required: true
     }
+  },
+
+  data () {
+    return {
+      internalSrc: null
+    }
+  },
+
+  watch: {
+    src: {
+      immediate: true,
+      handler (src) {
+        this.internalSrc = src
+      }
+    }
+  },
+
+  methods: {
+
+    cleanup () {
+      this.internalSrc = null
+      this.$emit('cleanup')
+    },
+
+    onSelect (value) {
+      const src = URL.createObjectURL(value)
+
+      this.internalSrc = src
+
+      this.$emit('imageSelected', value)
+      this.$emit('selected', value)
+    }
+  }
 }
 </script>

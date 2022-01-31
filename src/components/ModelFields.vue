@@ -52,47 +52,47 @@
 
 <script lang="ts">
 
-import Vue, { PropType } from 'vue';
+import Vue, { PropType } from 'vue'
 import { FieldConfig } from '@/types/schema'
-import { FieldResult } from '@/types/components/model';
-import { Model } from '@/types/laravel';
+import { FieldResult } from '@/types/components/model'
+import { Model } from '@/types/laravel'
 
 export default Vue.extend({
-    name: 'ModelFields',
-    props: {
+  name: 'ModelFields',
+  props: {
 
-        fields: {
-            type: Array as PropType<FieldConfig[]>,
-            required: true
-        },
+    fields: {
+      type: Array as PropType<FieldConfig[]>,
+      required: true
+    },
 
-        model: {
-            type: Object as PropType<Model>,
-            required: true,
+    model: {
+      type: Object as PropType<Model>,
+      required: true
+    }
+  },
+
+  computed: {
+    computedFields (): FieldResult[] {
+      return this.fields.map((field): FieldResult => {
+        return {
+          title: field.title,
+          type: field.type,
+          value: this.processFieldValue(field, this.model)
         }
-    },
+      })
+    }
+  },
 
-    computed: {
-        computedFields(): FieldResult[] {
-            return this.fields.map((field): FieldResult => {
-                return {
-                    title: field.title,
-                    type: field.type,
-                    value: this.processFieldValue(field, this.model)
-                }
-            })
-        }
-    },
+  methods: {
+    processFieldValue (field: FieldConfig, model: Model) {
+      let result = model[field.name] ?? null
 
-    methods: {
-        processFieldValue(field: FieldConfig, model: Model) {
-            let result = model[field.name] ?? null;
-
-            if (typeof field.format === 'function') {
-                result = field.format(result, model);
-            }
-            return result;
-        },
-    },
+      if (typeof field.format === 'function') {
+        result = field.format(result, model)
+      }
+      return result
+    }
+  }
 })
 </script>

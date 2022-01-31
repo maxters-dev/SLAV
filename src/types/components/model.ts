@@ -1,4 +1,4 @@
-import { FieldConfig } from '../schema';
+import { FieldConfig } from '../schema'
 
 export type FieldResult = {
     type: FieldConfig['type'];

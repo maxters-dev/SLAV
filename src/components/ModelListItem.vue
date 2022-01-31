@@ -67,60 +67,60 @@
 </template>
 
 <script>
-import moment from 'moment';
-import ModelDescriptionList from './ModelDescriptionList.vue';
+import moment from 'moment'
+import ModelDescriptionList from './ModelDescriptionList.vue'
 
 export default {
-    components: {  ModelDescriptionList },
-    props: {
-        editRoute: {
-            type: Object,
-            required: true,
-        },
-
-        showRoute: {
-            type: Object,
-            required: true,
-        },
-
-        fields: {
-            type: Array,
-            default: () => ([
-                { name: 'name', title: 'Name' }
-            ])
-        },
-
-        model: {
-            type: Object,
-            required: true,
-        },
-
-        title: {
-            type: String,
-            required: true,
-        },
-
-        image: {
-            type: String,
-            default: null
-        },
-
-        date: {
-            type: [Date, String],
-            default: null,
-        }
+  components: { ModelDescriptionList },
+  props: {
+    editRoute: {
+      type: Object,
+      required: true
     },
 
-    methods: {
-        routeExists(name) {
-            return this.$router.match({ name }).matched.length > 0
-        },
-        remove() {
-            this.$emit('removed');
-        },
+    showRoute: {
+      type: Object,
+      required: true
+    },
 
-        moment,
+    fields: {
+      type: Array,
+      default: () => ([
+        { name: 'name', title: 'Name' }
+      ])
+    },
 
+    model: {
+      type: Object,
+      required: true
+    },
+
+    title: {
+      type: String,
+      required: true
+    },
+
+    image: {
+      type: String,
+      default: null
+    },
+
+    date: {
+      type: [Date, String],
+      default: null
     }
+  },
+
+  methods: {
+    routeExists (name) {
+      return this.$router.match({ name }).matched.length > 0
+    },
+    remove () {
+      this.$emit('removed')
+    },
+
+    moment
+
+  }
 }
 </script>
