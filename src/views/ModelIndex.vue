@@ -218,10 +218,6 @@ export default (Vue as VueConstructor<Vue & Refs>).extend({
       const index = this.models.data.indexOf(model)
 
       this.models.data.splice(index, 1)
-    },
-
-    getImage (model: Model) {
-      return model[this.itemImageProp] ?? 'failed.png'
     }
 
   }
