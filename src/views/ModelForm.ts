@@ -1,98 +1,39 @@
+
 import { titleCase } from '../helpers';
-import { Model } from '../types/laravel';
 import { InputSchemaProperties } from '../types/schema';
-import Vue from 'vue';
 
-function prepareVSelectField (
-    component: Vue,
-    inputSchema: InputSchemaProperties
-) {
-    inputSchema.props = { ...inputSchema.props, items: [], loading: false };
-
-    if (inputSchema.multiple) {
-        inputSchema.props = {
-            hideNoData: true,
-            hideDetails: true,
-            chips: true,
-            itemText: 'name',
-            itemValue: 'id',
-            search: undefined,
-            ...inputSchema.props
-        };
-    }
-
-    if (typeof inputSchema.items === 'function') {
-        inputSchema.props.loading = true;
-
-        inputSchema
-            .items()
-            .then((items: Model[]) => {
-                inputSchema.props.items = items;
-                component.$forceUpdate();
-            })
-            .finally(() => {
-                inputSchema.props.loading = false;
-            });
-    }
-}
-
-function prepareVAutocompleteField (
-    component: Vue,
-    inputSchema: InputSchemaProperties
-) {
-    inputSchema.props = { items: [], loading: false, ...inputSchema.props };
-    inputSchema._listeners ??= {};
-
-    if (inputSchema.multiple) {
-        Object.assign(inputSchema.props, {
-            chips: true,
-            itemText: 'name',
-            itemValue: 'id',
-            cached: true
-        });
-    }
-
-    if (typeof inputSchema.search === 'function') {
-        inputSchema._listeners['update:search-input'] = async (
-            term: string
-        ) => {
-            inputSchema.props.loading = true;
-
-            try {
-                inputSchema.props.items = await inputSchema.search(term);
-                component.$forceUpdate();
-            } finally {
-                inputSchema.props.loading = false;
-            }
-        };
-    }
-}
-
-export function prepareFieldProperties (
-    component: Vue,
-    inputSchema: InputSchemaProperties
-) {
+export function createFieldDefinition (inputSchemaProps: InputSchemaProperties) {
     const label = titleCase(
-        inputSchema.label || inputSchema.placeholder || inputSchema.name
+        inputSchemaProps.label || inputSchemaProps.placeholder || inputSchemaProps.name
     );
 
+    const required = typeof inputSchemaProps.component === 'string' &&
+        ['VTextarea', 'VSelect', 'VTextField'].includes(
+            inputSchemaProps.component
+        );
+
     const props = {
-        required:
-            typeof inputSchema.component === 'string' &&
-            ['VTextarea', 'VSelect', 'VTextField'].includes(
-                inputSchema.component
-            ),
-        ...inputSchema,
+        required,
+        ...inputSchemaProps,
         label
     };
 
     delete props.component;
+    delete props.listeners;
+    delete props.transformValue;
 
-    inputSchema.props = props;
-
-    if (inputSchema.component === 'VSelect') {
-        prepareVSelectField(component, inputSchema);
-    } else if (inputSchema.component === 'VAutocomplete') {
-        prepareVAutocompleteField(component, inputSchema);
+    if (['VSelect', 'VAutocomplete'].includes(inputSchemaProps.component as string)) {
+        Object.assign(props, {
+            ...props,
+            hideNoData: true,
+            hideDetails: true,
+            chips: inputSchemaProps.multiple === true,
+            itemText: 'name',
+            itemValue: 'id',
+            search: undefined,
+            items: []
+        });
     }
+
+    return props;
 }

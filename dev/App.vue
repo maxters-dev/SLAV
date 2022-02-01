@@ -4,11 +4,9 @@
     </v-app>
 </template>
 <script>
-import { VApp } from 'vuetify/lib'
+import { VApp } from 'vuetify/lib';
 export default {
-  components: { VApp },
-  created () {
-    console.log(this.$route)
-  }
-}
+    components: { VApp }
+
+};
 </script>

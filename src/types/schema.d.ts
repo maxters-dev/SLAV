@@ -24,13 +24,17 @@ export type InputSchemaProperties = {
     name: string;
     label: string;
     type?: string;
-    component?: Component;
+    component?: Component | string;
     listeners?:
         | ((props: InsideComponentParams) => Record<string, () => any>)
         | Record<string, () => any>;
-    transformValue?: (value: any) => any;
+    transformValue?: (value: any, model: Model) => any;
 } & Record<string, any>;
+
+export type InputSchemaCallback = ((config: InsideComponentParams) => InputSchemaProperties);
 
 export type InputSchema =
     | InputSchemaProperties
-    | ((config: InsideComponentParams) => InputSchemaProperties);
+    | InputSchemaCallback;
+
+export type FormSchema = InputSchema[] | ((config: InsideComponentParams) => InputSchema[])

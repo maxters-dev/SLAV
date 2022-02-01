@@ -1,6 +1,6 @@
 import { RawLocation, RouteConfig } from 'vue-router';
 import Resource from '../services/resource';
-import { FieldConfig, InputSchema, SearchSchema } from './schema';
+import { FieldConfig, FormSchema, InputSchema, SearchSchema } from './schema';
 
 export type CrudRouteConfigCallback = (
     config: Record<string, any>
@@ -44,7 +44,7 @@ export type ShowRouteProps = {
 
 export type ResourceRouteConfig = {
     name: string;
-    formSchema: InputSchema[];
+    formSchema: FormSchema;
     icon?: string;
     searchSchema?: SearchSchema[];
     create?: ((props: FormRouteProps) => FormRouteProps) | false;

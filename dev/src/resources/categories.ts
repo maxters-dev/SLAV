@@ -2,35 +2,38 @@ import { Resource } from '../../../index';
 import { Model } from '../../../src/types/laravel';
 import { createRouteResource } from '../../../src/router-resource';
 import { addTimestampsFields } from '../../../src/helpers/schema/ptBr';
+import { InputSchema } from '../../../src/types/schema';
 
-const formSchema = [
-    {
-        name: 'name',
-        label: 'Nome'
-    },
-    {
-        name: 'slug',
-        label: 'Slug'
-    },
-    {
-        name: 'description',
-        label: 'Descrição'
-    },
-    {
-        name: 'products',
-        label: 'Produtos',
-        component: 'VAutocomplete',
-        multiple: true,
-        transformValue: (products: Model[]) => products.map(product => product.id),
-        search: async (name: string) => {
-            const { data: products } = await new Resource('products').paginated({
-                'contains[name]': name
-            });
+function formSchema (): InputSchema[] {
+    return ([
+        {
+            name: 'full_name',
+            label: 'Nome Completo'
+        },
+        {
+            name: 'user',
+            label: 'Nome do Usuário'
+        },
+        {
+            name: 'description',
+            label: 'Descrição'
+        },
+        {
+            name: 'products',
+            label: 'Produtos',
+            component: 'VAutocomplete',
+            multiple: true,
+            transformValue: (products: Model[]) => products.map(product => product.id),
+            search: async (name: string) => {
+                const { data: products } = await new Resource('products').paginated({
+                    'contains[name]': name
+                });
 
-            return products;
+                return products;
+            }
         }
-    }
-];
+    ]);
+}
 
 const fields = addTimestampsFields([
     {
@@ -49,7 +52,7 @@ const fields = addTimestampsFields([
 ]);
 
 export default createRouteResource({
-    name: 'categories',
+    name: 'customers',
     icon: 'mdi-tag',
     formSchema,
     show: false,

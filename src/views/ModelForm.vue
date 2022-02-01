@@ -6,14 +6,12 @@
         <v-divider class="my-5" />
         <v-card :loading="loading.fetch" :disabled="loading.fetch">
             <v-card-text>
-                <div v-for="field in computedFields" :key="field.name">
-                    <component
-                        :is="field.component"
-                        v-model="model[field.name]"
-                        v-bind="field.props"
-                        v-on="listeners(field)"
-                    />
-                </div>
+                <model-form-field
+                    :input-schema="item"
+                    v-model="model[item.name]"
+                    :model="model"
+                    v-for="item in inputSchemas" :key="item.name"
+                />
                 <div class="d-flex justify-end">
                     <v-btn
                         color="primary"
@@ -32,36 +30,20 @@
 import Vue, { PropType } from 'vue';
 import { EventBus } from '../services/event-bus';
 
-import { prepareFieldProperties } from '../views/ModelForm';
 import Resource from '../services/resource';
 
-import AppDatePicker from '../components/AppDatePicker.vue';
-import {
-    VAutocomplete,
-    VTextField,
-    VTextarea,
-    VSelect,
-    VChip,
-    VSwitch
-} from 'vuetify/lib';
-import { InputSchema, InputSchemaProperties } from '../types/schema';
+import { FormSchema, InputSchema } from '../types/schema';
+import ModelFormField from './ModelFormField.vue';
 
 export default Vue.extend({
+
+    components: { ModelFormField },
     name: 'ModelForm',
-    components: {
-        VTextField,
-        VTextarea,
-        VSelect,
-        VChip,
-        VSwitch,
-        AppDatePicker,
-        VAutocomplete
-    },
 
     props: {
         formSchema: {
-            type: Array as PropType<InputSchema[]>,
-            default: () => []
+            type: [Object, Function] as PropType<FormSchema>,
+            required: true
         },
         pageTitle: {
             type: String,
@@ -81,7 +63,8 @@ export default Vue.extend({
 
     data () {
         return {
-            computedFields: [] as Array<any>,
+            inputSchemas: [] as InputSchema[],
+
             model: {} as any,
             loading: { fetch: false, saving: false } as {
                 fetch: boolean;
@@ -99,22 +82,17 @@ export default Vue.extend({
 
     async created () {
         await this.fetchData();
-        this.computedFields = this.getComputedFields();
+        this.inputSchemas = this.getFormSchemaAsArray();
     },
+
     methods: {
-        getComputedFields () {
-            return this.formSchema.map((field: InputSchema) => {
-                if (typeof field === 'function') {
-                    field = field({
-                        model: this.model,
-                        component: this
-                    }) as InputSchemaProperties;
-                }
 
-                prepareFieldProperties(this, field);
+        getFormSchemaAsArray (): InputSchema[] {
+            if (typeof this.formSchema === 'function') {
+                return this.formSchema({ model: this.model, component: this });
+            }
 
-                return { component: 'VTextField', ...field };
-            });
+            return this.formSchema;
         },
 
         async save () {
@@ -141,37 +119,10 @@ export default Vue.extend({
             this.loading.fetch = true;
 
             try {
-                const model = await this.resource.show(this.id);
-
-                this.computedFields.forEach((field) => {
-                    if (field.transformValue) {
-                        model[field.name] = field.transformValue(
-                            model[field.name],
-                            model
-                        );
-                    }
-                });
-
-                this.model = model;
+                this.model = await this.resource.show(this.id);
             } finally {
                 this.loading.fetch = false;
             }
-        },
-
-        listeners (field: InputSchemaProperties) {
-            let listeners = {};
-
-            // O listener deve retornar uma função ou objeto
-            if (typeof field.listeners === 'function') {
-                Object.assign(
-                    listeners,
-                    field.listeners({ model: this.model, component: this })
-                );
-            } else if (typeof field.listeners === 'object') {
-                listeners = field.listeners;
-            }
-
-            return { ...listeners, ...field._listeners };
         }
     }
 });
