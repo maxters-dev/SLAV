@@ -1,27 +1,37 @@
 import api from './api';
 
+const TOKEN_KEY = '@SlavToken@';
+
 type AuthUser = {
-    name: string;
-    email: string;
     // eslint-disable-next-line camelcase
     api_token: string;
-};
+} & Record<string, any>;
 
-export default {
-    tokenName: 'SlavToken',
+export interface AuthService {
+    attempt(email: string, password: string): Promise<AuthUser>;
+    getUser(): Promise<AuthUser>;
+    login(email: string, password: string): Promise<AuthUser>;
+    logout(): void;
+    setToken (value: string): AuthService;
+    getToken (): string | null;
+    removeToken(): void;
+}
+
+const authSessionService: AuthService = {
 
     getToken (): string | null {
-        return localStorage.getItem(this.tokenName);
+        return sessionStorage.getItem(TOKEN_KEY);
     },
     setToken (value: string) {
-        localStorage.setItem(this.tokenName, value);
+        sessionStorage.setItem(TOKEN_KEY, value);
         return this;
     },
     removeToken (): void {
-        localStorage.removeItem(this.tokenName);
+        sessionStorage.removeItem(TOKEN_KEY);
     },
-    async getUser (): Promise<Record<string, any>> {
-        return api.get('users/me');
+    async getUser (): Promise<AuthUser> {
+        const { data } = await api.get('users/me');
+        return data as AuthUser;
     },
     logout (): void {
         this.removeToken();
@@ -38,3 +48,5 @@ export default {
         return authUser;
     }
 };
+
+export default authSessionService;
