@@ -97,14 +97,14 @@
 
 <script lang="ts">
 
-import Resource from '../services/resource'
-import ModelSearch from '../components/ModelSearch.vue'
-import ModelListItem from '../components/ModelListItem.vue'
-import AppDialogConfirm from '../components/AppDialogConfirm.vue'
-import Vue, { PropType, VueConstructor } from 'vue'
-import { Model, Paginated } from '../types/laravel'
-import { IndexRouteProps, ResourceActionNames } from '../types/router'
-import { SearchSchema } from '@/types/schema'
+import Resource from '../services/resource';
+import ModelSearch from '../components/ModelSearch.vue';
+import ModelListItem from '../components/ModelListItem.vue';
+import AppDialogConfirm from '../components/AppDialogConfirm.vue';
+import Vue, { PropType, VueConstructor } from 'vue';
+import { Model, Paginated } from '../types/laravel';
+import { IndexRouteProps, ResourceActionNames } from '../types/router';
+import { SearchSchema } from '@/types/schema';
 
 interface Refs
 {
@@ -114,112 +114,112 @@ interface Refs
 }
 
 function useStringOrCallback (
-  model: Model,
-  prop: IndexRouteProps['itemTitleProp'] | IndexRouteProps['itemImageProp']
+    model: Model,
+    prop: IndexRouteProps['itemTitleProp'] | IndexRouteProps['itemImageProp']
 ) : string | null {
-  if (typeof prop === 'function') {
-    return prop(model)
-  } else if (typeof prop === 'string') {
-    return model[prop]
-  }
+    if (typeof prop === 'function') {
+        return prop(model);
+    } else if (typeof prop === 'string') {
+        return model[prop];
+    }
 
-  return null
+    return null;
 }
 
 export default (Vue as VueConstructor<Vue & Refs>).extend({
 
-  name: 'ModelList',
-  components: {
-    AppDialogConfirm,
-    ModelListItem,
-    ModelSearch
-  },
-
-  props: {
-    resource: {
-      type: Resource,
-      required: true
+    name: 'ModelList',
+    components: {
+        AppDialogConfirm,
+        ModelListItem,
+        ModelSearch
     },
 
-    pageTitle: {
-      type: String,
-      required: true
+    props: {
+        resource: {
+            type: Resource,
+            required: true
+        },
+
+        pageTitle: {
+            type: String,
+            required: true
+        },
+
+        actionNames: {
+            type: Object as PropType<ResourceActionNames>,
+            required: true
+        },
+        itemTitleProp: {
+            type: [String, Function] as PropType<IndexRouteProps['itemTitleProp']>,
+            default: 'name'
+        },
+        itemImageProp: {
+            type: Object as PropType<IndexRouteProps['itemImageProp']>,
+            default: null
+        },
+
+        fields: {
+            type: Array as PropType<IndexRouteProps['fields']>,
+            required: true
+        },
+
+        searchSchema: {
+            type: Array as PropType<SearchSchema[]>,
+            default: () => []
+        }
     },
 
-    actionNames: {
-      type: Object as PropType<ResourceActionNames>,
-      required: true
-    },
-    itemTitleProp: {
-      type: [String, Function] as PropType<IndexRouteProps['itemTitleProp']>,
-      default: 'name'
-    },
-    itemImageProp: {
-      type: Object as PropType<IndexRouteProps['itemImageProp']>,
-      default: null
+    data () {
+        return {
+            models: { data: [] as Model[] } as Paginated,
+            loading: { fetch: false }
+        };
     },
 
-    fields: {
-      type: Array as PropType<IndexRouteProps['fields']>,
-      required: true
+    watch: {
+        $route () {
+            this.models = { data: [] as Model[] } as Paginated;
+            this.paginate();
+        }
     },
 
-    searchSchema: {
-      type: Array as PropType<SearchSchema[]>,
-      default: () => []
+    created () {
+        this.paginate();
+    },
+
+    methods: {
+
+        preparedModel (model: Model) {
+            return {
+                title: useStringOrCallback(model, this.itemTitleProp),
+                image: useStringOrCallback(model, this.itemImageProp)
+            };
+        },
+
+        async paginate (params: any = {}) {
+            this.loading.fetch = true;
+            try {
+                this.models = await this.resource.paginated(params);
+            } finally {
+                this.loading.fetch = false;
+            }
+        },
+
+        async remove (model: Model) {
+            const ok: boolean = await this.$refs.confirm.open({
+                text: 'Deseja remover esse model?'
+            });
+
+            if (!ok) return;
+
+            await this.resource.delete(model.id);
+
+            const index = this.models.data.indexOf(model);
+
+            this.models.data.splice(index, 1);
+        }
+
     }
-  },
-
-  data () {
-    return {
-      models: { data: [] as Model[] } as Paginated,
-      loading: { fetch: false }
-    }
-  },
-
-  watch: {
-    $route () {
-      this.models = { data: [] as Model[] } as Paginated
-      this.paginate()
-    }
-  },
-
-  created () {
-    this.paginate()
-  },
-
-  methods: {
-
-    preparedModel (model: Model) {
-      return {
-        title: useStringOrCallback(model, this.itemTitleProp),
-        image: useStringOrCallback(model, this.itemImageProp)
-      }
-    },
-
-    async paginate (params: any = {}) {
-      this.loading.fetch = true
-      try {
-        this.models = await this.resource.paginated(params)
-      } finally {
-        this.loading.fetch = false
-      }
-    },
-
-    async remove (model: Model) {
-      const ok: boolean = await this.$refs.confirm.open({
-        text: 'Deseja remover esse model?'
-      })
-
-      if (!ok) return
-
-      await this.resource.delete(model.id)
-
-      const index = this.models.data.indexOf(model)
-
-      this.models.data.splice(index, 1)
-    }
-
-  }
-})
+});
 </script>

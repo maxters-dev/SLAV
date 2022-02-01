@@ -1,8 +1,8 @@
-import { SidebarItemConfig } from '../types/router'
-import Vue from 'vue'
+import { SidebarItemConfig } from '../types/router';
+import Vue from 'vue';
 
 const store = Vue.observable({
-  sidebarItems: [] as SidebarItemConfig[]
-})
+    sidebarItems: [] as SidebarItemConfig[]
+});
 
-export default store
+export default store;

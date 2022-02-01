@@ -34,32 +34,32 @@
 </template>
 
 <script lang="ts">
-import { SearchSchema } from '../types/schema'
-import Vue, { PropType } from 'vue'
+import { SearchSchema } from '../types/schema';
+import Vue, { PropType } from 'vue';
 
 export default Vue.extend({
 
-  name: 'ModelSearch',
+    name: 'ModelSearch',
 
-  props: {
-    searchSchema: {
-      type: Array as PropType<SearchSchema[]>,
-      required: true
-    }
-  },
+    props: {
+        searchSchema: {
+            type: Array as PropType<SearchSchema[]>,
+            required: true
+        }
+    },
 
-  data () {
-    return {
-      searchValue: '' as string,
-      searchField: this.searchSchema[0].value as string
-    }
-  },
+    data () {
+        return {
+            searchValue: '' as string,
+            searchField: this.searchSchema[0].value as string
+        };
+    },
 
-  methods: {
-    submit () {
-      this.$emit('submit', { [this.searchField]: this.searchValue })
+    methods: {
+        submit () {
+            this.$emit('submit', { [this.searchField]: this.searchValue });
+        }
     }
-  }
-})
+});
 
 </script>

@@ -1,1 +1,1 @@
-export const titleCase = (value: string) => value
+export const titleCase = (value: string) => value;

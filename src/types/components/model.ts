@@ -1,7 +1,7 @@
-import { FieldConfig } from '../schema'
+import { FieldViewSchema } from '../schema';
 
 export type FieldResult = {
-    type: FieldConfig['type'];
-    title: FieldConfig['name'];
+    type: FieldViewSchema['type'];
+    title: FieldViewSchema['name'];
     value: string | string[];
 };

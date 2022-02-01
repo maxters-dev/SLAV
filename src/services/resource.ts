@@ -1,17 +1,17 @@
-import { Model, Paginated, Payload } from '../types/laravel'
-import api from './api'
+import { Model, Paginated, Payload } from '../types/laravel';
+import api from './api';
 
 class Resource {
     prefix: string;
 
     constructor (prefix: string) {
-      this.prefix = prefix
+        this.prefix = prefix;
     }
 
     async create (payload: Payload) {
-      const { data } = await api.post(this.prefix, payload)
+        const { data } = await api.post(this.prefix, payload);
 
-      return data
+        return data;
     }
 
     /**
@@ -21,9 +21,9 @@ class Resource {
      * @returns {Object}
      */
     async update (id: number, payload: Payload) {
-      const { data } = await api.put(`${this.prefix}/${id}`, payload)
+        const { data } = await api.put(`${this.prefix}/${id}`, payload);
 
-      return data
+        return data;
     }
 
     /**
@@ -32,9 +32,9 @@ class Resource {
      * @returns
      */
     async paginated (params: Record<string, number|string>): Promise<Paginated> {
-      const { data } = await api.get(`${this.prefix}`, { params: { page: 1, ...params } })
+        const { data } = await api.get(`${this.prefix}`, { params: { page: 1, ...params } });
 
-      return data as Paginated
+        return data as Paginated;
     }
 
     /**
@@ -43,7 +43,7 @@ class Resource {
      * @returns {void}
      */
     async delete (id: number) {
-      await api.delete(`${this.prefix}/${id}`)
+        await api.delete(`${this.prefix}/${id}`);
     }
 
     /**
@@ -52,16 +52,16 @@ class Resource {
      * @returns
      */
     async show (id: number): Promise<Model> {
-      const { data } = await api.get(`${this.prefix}/${id}`)
+        const { data } = await api.get(`${this.prefix}/${id}`);
 
-      return data as Model
+        return data as Model;
     }
 
     async all (): Promise<Paginated['data']> {
-      const result = await this.paginated({})
+        const result = await this.paginated({});
 
-      return result.data
+        return result.data;
     }
 }
 
-export default Resource
+export default Resource;

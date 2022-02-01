@@ -1,28 +1,28 @@
-import { FieldConfig } from '../../types/schema'
-import moment from 'moment'
+import { FieldViewSchema } from '../../types/schema';
+import moment from 'moment';
 
-const yesOrNot = (value: Boolean) => (value ? 'Sim' : 'Não')
+const yesOrNot = (value: boolean) => (value ? 'Sim' : 'Não');
 
 const dateFormatter = (date: string) => {
-  return moment(date).format('DD/MM/YYYY')
-}
+    return moment(date).format('DD/MM/YYYY');
+};
 
 const dateTimeFormatter = (date: string) => {
-  return moment(date).format('DD/MM/YYYY HH:mm')
-}
+    return moment(date).format('DD/MM/YYYY HH:mm');
+};
 
-const addTimestampsFields = (fields: FieldConfig[]) => {
-  fields.push(
-    { name: 'created_at', title: 'Data de Criação', format: dateTimeFormatter },
-    { name: 'updated_at', title: 'Data de Atualização', format: dateTimeFormatter }
-  )
+const addTimestampsFields = (fields: FieldViewSchema[]) => {
+    fields.push(
+        { name: 'created_at', title: 'Data de Criação', format: dateTimeFormatter },
+        { name: 'updated_at', title: 'Data de Atualização', format: dateTimeFormatter }
+    );
 
-  return fields
-}
+    return fields;
+};
 
 export {
-  addTimestampsFields,
-  dateFormatter,
-  dateTimeFormatter,
-  yesOrNot
-}
+    addTimestampsFields,
+    dateFormatter,
+    dateTimeFormatter,
+    yesOrNot
+};

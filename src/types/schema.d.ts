@@ -1,5 +1,5 @@
-import Vue from 'vue'
-import { Model } from './laravel'
+import Vue from 'vue';
+import { Model } from './laravel';
 
 type InsideComponentParams = { model: Model, component: Vue };
 
@@ -8,18 +8,23 @@ export type SearchSchema = {
     text: string;
 }
 
-export type FieldConfig = {
+export type FieldViewSchema = {
     name: string;
     title: string;
     type?: string;
     format?: (value: any, model: Record<string, any>) => string | string[];
 }
 
+/**
+ * @deprecated
+ */
+export type FieldConfig = FieldViewSchema;
+
 export type InputSchemaProperties = {
     name: string;
     label: string;
     type?: string;
-    component?: String | Function;
+    component?: string | Function;
     listeners?: ((props: InsideComponentParams) => Record<string, Function>) | Record<string, Function>;
     transformValue?: ((value: any) => any)
 } & Record<string, any>

@@ -1,13 +1,13 @@
-import { RawLocation, RouteConfig } from 'vue-router'
-import Resource from '../services/resource'
-import { FieldConfig, InputSchema, SearchSchema } from './schema'
+import { RawLocation, RouteConfig } from 'vue-router';
+import Resource from '../services/resource';
+import { FieldConfig, InputSchema, SearchSchema } from './schema';
 
 export type CrudRouteConfigCallback = (config: Record<string, any>) => Record<string, any>;
 
 export type BaseRouteProps = {
     pageTitle: string;
     resource: Resource;
-}
+};
 
 export type ResourceActionNames = {
     index: string;

@@ -14,35 +14,35 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
-import { VCard } from 'vuetify/lib'
+import Vue from 'vue';
+import { VCard } from 'vuetify/lib';
 
 export default Vue.extend({
-  components: { VCard },
-  name: 'AppDialogConfirm',
+    components: { VCard },
+    name: 'AppDialogConfirm',
 
-  data () {
-    return {
-      text: '' as string,
-      active: false as boolean
-    }
-  },
-
-  methods: {
-    choice (value: boolean) {
-      this.$emit('choice', value)
-      this.active = false
+    data () {
+        return {
+            text: '' as string,
+            active: false as boolean
+        };
     },
 
-    open ({ text }: { text: string }): Promise<boolean> {
-      this.text = text
+    methods: {
+        choice (value: boolean) {
+            this.$emit('choice', value);
+            this.active = false;
+        },
 
-      this.active = true
+        open ({ text }: { text: string }): Promise<boolean> {
+            this.text = text;
 
-      return new Promise((resolve) => {
-        this.$on('choice', resolve)
-      })
+            this.active = true;
+
+            return new Promise((resolve) => {
+                this.$on('choice', resolve);
+            });
+        }
     }
-  }
-})
+});
 </script>
