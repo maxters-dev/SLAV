@@ -13,16 +13,19 @@ const dateTimeFormatter = (date: string) => {
 
 const addTimestampsFields = (fields: FieldViewSchema[]) => {
     fields.push(
-        { name: 'created_at', title: 'Data de Criação', format: dateTimeFormatter },
-        { name: 'updated_at', title: 'Data de Atualização', format: dateTimeFormatter }
+        {
+            name: 'created_at',
+            title: 'Data de Criação',
+            format: dateTimeFormatter
+        },
+        {
+            name: 'updated_at',
+            title: 'Data de Atualização',
+            format: dateTimeFormatter
+        }
     );
 
     return fields;
 };
 
-export {
-    addTimestampsFields,
-    dateFormatter,
-    dateTimeFormatter,
-    yesOrNot
-};
+export { addTimestampsFields, dateFormatter, dateTimeFormatter, yesOrNot };

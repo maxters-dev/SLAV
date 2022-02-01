@@ -1,10 +1,13 @@
 export type CommandButton = {
     icon: string;
     id: any;
-    handler: Function;
-}
+    handler: (focus: any) => any;
+};
 
-const createHandler = (name: string, ...params: any): Function => {
+const createHandler = (
+    name: string,
+    ...params: any
+): CommandButton['handler'] => {
     return (focus: any) => {
         return focus[name](...params).run();
     };

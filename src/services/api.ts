@@ -30,7 +30,7 @@ const onErrorInterceptor = (err: AxiosError) => {
     if (status === 401) {
         auth.removeToken();
     } else if (status === 422 && data) {
-        const errors: UnprocessableEntity = (data?.errors || {});
+        const errors: UnprocessableEntity = data?.errors || {};
         const message = Object.values(errors)[0][0];
         EventBus.$emit('message', message);
     } else if (status === 400 && data.message) {
@@ -43,7 +43,10 @@ const onErrorInterceptor = (err: AxiosError) => {
 api.interceptors.request.use(requestConfig);
 api.interceptors.response.use((res) => res, onErrorInterceptor);
 
-export async function uploadSingleFile (path: string, { name, file }: { name: string, file: File }): Promise<Record<string, any>> {
+export async function uploadSingleFile (
+    path: string,
+    { name, file }: { name: string; file: File }
+): Promise<Record<string, any>> {
     const formData = new FormData();
     formData.append(name, file, file.name);
     const { data } = await api.post(path, formData);

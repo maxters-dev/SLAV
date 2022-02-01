@@ -1,7 +1,7 @@
 import { Model, Paginated, Payload } from '../types/laravel';
 import api from './api';
 
-class Resource {
+export default class Resource {
     prefix: string;
 
     constructor (prefix: string) {
@@ -14,43 +14,26 @@ class Resource {
         return data;
     }
 
-    /**
-     *
-     * @param {Number} id
-     * @param {Object} payload
-     * @returns {Object}
-     */
     async update (id: number, payload: Payload) {
         const { data } = await api.put(`${this.prefix}/${id}`, payload);
 
         return data;
     }
 
-    /**
-     *
-     * @param {Object} params
-     * @returns
-     */
-    async paginated (params: Record<string, number|string>): Promise<Paginated> {
-        const { data } = await api.get(`${this.prefix}`, { params: { page: 1, ...params } });
+    async paginated (
+        params: Record<string, number | string>
+    ): Promise<Paginated> {
+        const { data } = await api.get(`${this.prefix}`, {
+            params: { page: 1, ...params }
+        });
 
         return data as Paginated;
     }
 
-    /**
-     *
-     * @param {Number} id
-     * @returns {void}
-     */
     async delete (id: number) {
         await api.delete(`${this.prefix}/${id}`);
     }
 
-    /**
-     *
-     * @param {Object} payload
-     * @returns
-     */
     async show (id: number): Promise<Model> {
         const { data } = await api.get(`${this.prefix}/${id}`);
 
@@ -63,5 +46,3 @@ class Resource {
         return result.data;
     }
 }
-
-export default Resource;

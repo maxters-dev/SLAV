@@ -1,14 +1,13 @@
 import api from './api';
 
 type AuthUser = {
-  name: string;
-  email: string;
-  // eslint-disable-next-line camelcase
-  api_token: string;
-}
+    name: string;
+    email: string;
+    // eslint-disable-next-line camelcase
+    api_token: string;
+};
 
 export default {
-
     tokenName: 'SlavToken',
 
     getToken (): string | null {

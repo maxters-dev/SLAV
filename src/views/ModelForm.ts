@@ -3,7 +3,10 @@ import { Model } from '../types/laravel';
 import { InputSchemaProperties } from '../types/schema';
 import Vue from 'vue';
 
-function prepareVSelectField (component: Vue, inputSchema: InputSchemaProperties) {
+function prepareVSelectField (
+    component: Vue,
+    inputSchema: InputSchemaProperties
+) {
     inputSchema.props = { ...inputSchema.props, items: [], loading: false };
 
     if (inputSchema.multiple) {
@@ -21,16 +24,22 @@ function prepareVSelectField (component: Vue, inputSchema: InputSchemaProperties
     if (typeof inputSchema.items === 'function') {
         inputSchema.props.loading = true;
 
-        inputSchema.items().then((items: Model[]) => {
-            inputSchema.props.items = items;
-            component.$forceUpdate();
-        }).finally(() => {
-            inputSchema.props.loading = false;
-        });
+        inputSchema
+            .items()
+            .then((items: Model[]) => {
+                inputSchema.props.items = items;
+                component.$forceUpdate();
+            })
+            .finally(() => {
+                inputSchema.props.loading = false;
+            });
     }
 }
 
-function prepareVAutocompleteField (component: Vue, inputSchema: InputSchemaProperties) {
+function prepareVAutocompleteField (
+    component: Vue,
+    inputSchema: InputSchemaProperties
+) {
     inputSchema.props = { items: [], loading: false, ...inputSchema.props };
     inputSchema._listeners ??= {};
 
@@ -44,7 +53,9 @@ function prepareVAutocompleteField (component: Vue, inputSchema: InputSchemaProp
     }
 
     if (typeof inputSchema.search === 'function') {
-        inputSchema._listeners['update:search-input'] = async (term: string) => {
+        inputSchema._listeners['update:search-input'] = async (
+            term: string
+        ) => {
             inputSchema.props.loading = true;
 
             try {
@@ -57,11 +68,20 @@ function prepareVAutocompleteField (component: Vue, inputSchema: InputSchemaProp
     }
 }
 
-export function prepareFieldProperties (component: Vue, inputSchema: InputSchemaProperties) {
-    const label = titleCase(inputSchema.label || inputSchema.placeholder || inputSchema.name);
+export function prepareFieldProperties (
+    component: Vue,
+    inputSchema: InputSchemaProperties
+) {
+    const label = titleCase(
+        inputSchema.label || inputSchema.placeholder || inputSchema.name
+    );
 
     const props = {
-        required: typeof inputSchema.component === 'string' && ['VTextarea', 'VSelect', 'VTextField'].includes(inputSchema.component),
+        required:
+            typeof inputSchema.component === 'string' &&
+            ['VTextarea', 'VSelect', 'VTextField'].includes(
+                inputSchema.component
+            ),
         ...inputSchema,
         label
     };
