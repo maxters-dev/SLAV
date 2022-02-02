@@ -35,7 +35,7 @@ import { EventBus } from '../services/event-bus';
 import Resource from '../services/resource';
 
 import { FormSchema, InputSchema } from '../types/schema';
-import ModelFormField from './ModelFormField.vue';
+import ModelFormField from '../components/ModelFormField.vue';
 
 export default Vue.extend({
 
