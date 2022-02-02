@@ -37,6 +37,8 @@ const onErrorInterceptor = (err: AxiosError) => {
         EventBus.$emit('message', data.message);
     }
 
+    EventBus.$emit('axiosError', data);
+
     return Promise.reject(err);
 };
 

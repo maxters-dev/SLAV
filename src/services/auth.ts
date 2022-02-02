@@ -37,7 +37,7 @@ const authSessionService: AuthService = {
         this.removeToken();
     },
 
-    async attempt (email: string, password: string): Promise<AuthUser> {
+    async attempt (email: string, password: string): Promise<any> {
         const { data } = await api.post('users/login', { email, password });
         return data as AuthUser;
     },

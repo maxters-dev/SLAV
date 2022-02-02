@@ -15,11 +15,6 @@ export type FieldViewSchema = {
     format?: (value: any, model: Record<string, any>) => string | string[];
 };
 
-/**
- * @deprecated
- */
-export type FieldConfig = FieldViewSchema;
-
 export type InputSchemaProperties = {
     name: string;
     label: string;

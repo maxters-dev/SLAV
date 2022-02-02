@@ -13,7 +13,6 @@
 import Vue, { PropType } from 'vue';
 import { Model } from '@/types/laravel';
 import { InputSchema, InputSchemaProperties } from '@/types/schema';
-import { createFieldDefinition } from './ModelForm';
 
 import AppDatePicker from '../components/AppDatePicker.vue';
 import {
@@ -24,6 +23,44 @@ import {
     VChip,
     VSwitch
 } from 'vuetify/lib';
+
+import { titleCase } from '../helpers';
+
+export function createFieldDefinition (inputSchemaProps: InputSchemaProperties) {
+    const label = titleCase(
+        inputSchemaProps.label || inputSchemaProps.placeholder || inputSchemaProps.name
+    );
+
+    const required = typeof inputSchemaProps.component === 'string' &&
+        ['VTextarea', 'VSelect', 'VTextField'].includes(
+            inputSchemaProps.component
+        );
+
+    const props = {
+        required,
+        ...inputSchemaProps,
+        label
+    };
+
+    delete props.component;
+    delete props.listeners;
+    delete props.transformValue;
+
+    if (['VSelect', 'VAutocomplete'].includes(inputSchemaProps.component as string)) {
+        Object.assign(props, {
+            ...props,
+            hideNoData: true,
+            hideDetails: true,
+            chips: inputSchemaProps.multiple === true,
+            itemText: 'name',
+            itemValue: 'id',
+            search: undefined,
+            items: []
+        });
+    }
+
+    return props;
+}
 
 export default Vue.extend({
     name: 'ModelFormField',

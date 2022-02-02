@@ -37,8 +37,13 @@
 <script lang="ts">
 import Vue, { PropType } from 'vue';
 import { FieldViewSchema } from '../types/schema';
-import { FieldResult } from '../types/components/model';
 import { Model } from '../types/laravel';
+
+type FieldResult = {
+    type: FieldViewSchema['type'];
+    title: FieldViewSchema['name'];
+    value: string | string[];
+}
 
 export default Vue.extend({
     name: 'ModelDescriptionList',
@@ -73,6 +78,7 @@ export default Vue.extend({
             if (typeof field.format === 'function') {
                 result = field.format(result, model);
             }
+
             return result;
         }
     }

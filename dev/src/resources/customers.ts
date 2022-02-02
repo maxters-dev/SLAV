@@ -36,7 +36,10 @@ export default createRouteResource({
     name: 'customers',
     icon: 'mdi-tag',
     formSchema,
-    show: false,
+    show: (props) => ({
+        ...props,
+        fields
+    }),
     index (props) {
         return {
             ...props,

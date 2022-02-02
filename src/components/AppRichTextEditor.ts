@@ -4,14 +4,14 @@ export type CommandButton = {
     handler: (focus: any) => any;
 };
 
-const createHandler = (
+export function createHandler (
     name: string,
     ...params: any
-): CommandButton['handler'] => {
+): CommandButton['handler'] {
     return (focus: any) => {
         return focus[name](...params).run();
     };
-};
+}
 
 export function generateButtons () {
     const buttons: CommandButton[] = [
