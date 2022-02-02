@@ -8,7 +8,8 @@
             <v-card-text>
                 <model-form-field
                     :input-schema="item"
-                    v-model="model[item.name]"
+                    @update:modelValue="(value) => setModelPropValue(item.name, value)"
+                    :model-value="getModelPropValue(item.name)"
                     :model="model"
                     v-for="item in inputSchemas" :key="item.name"
                 />
@@ -27,6 +28,7 @@
 </template>
 
 <script lang="ts">
+import { Model } from '@/types/laravel';
 import Vue, { PropType } from 'vue';
 import { EventBus } from '../services/event-bus';
 
@@ -86,6 +88,28 @@ export default Vue.extend({
     },
 
     methods: {
+
+        setModelPropValue (name: string, value: any) {
+            let deepValue = this.model;
+            const names: string[] = name.split('.');
+            const targetProp = names.pop() as string;
+
+            names.forEach((key: string) => {
+                deepValue = deepValue[key] as Model;
+            });
+
+            deepValue[targetProp] = value;
+        },
+
+        getModelPropValue (name: string) {
+            let deepValue = this.model;
+
+            name.split('.').forEach((key: string) => {
+                deepValue = deepValue[key];
+            });
+
+            return deepValue;
+        },
 
         getFormSchemaAsArray (): InputSchema[] {
             if (typeof this.formSchema === 'function') {
