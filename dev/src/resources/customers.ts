@@ -1,51 +1,54 @@
 
-import { Model } from '../../../src/types/laravel';
 import { createRouteResource } from '../../../src/router-resource';
 import { addTimestampsFields } from '../../../src/helpers/schema/ptBr';
-import { InputSchema } from '../../../src/types/schema';
+import { FieldViewSchema, FormSchema } from '../../../src/types/schema';
 
-function formSchema (): InputSchema[] {
-    return ([
-        {
-            name: 'full_name',
-            label: 'Nome Completo'
-        },
-        {
-            name: 'user.email',
-            label: 'E-mail do usuário'
-        },
-        {
-            name: 'description',
-            label: 'Descrição'
-        }
-    ]);
-}
+const minimalFields: FieldViewSchema[] = [
+    { title: 'Celular', name: 'phone' },
+    { title: 'E-mail', name: 'user', format: (user) => user.email }
+];
 
-const fields = addTimestampsFields([
+const fields: FieldViewSchema[] = addTimestampsFields([
+    { title: 'Nome Completo', name: 'full_name' },
+    ...minimalFields,
+    { title: 'Endereço', name: 'address' }
+]);
+
+const formSchema: FormSchema = () => ([
+    { name: 'user.name', label: 'Nome' },
     {
-        name: 'full_name',
-        title: 'Categoria'
+        name: 'gender',
+        label: 'Gênero',
+        component: 'VSelect',
+        itemValue: 'value',
+        multiple: false,
+        itemText: 'text',
+        items: [{ text: 'Masculino', value: 'M' }]
     },
-    {
-        name: 'description',
-        title: 'Descrição'
-    }
+    { name: 'cpf', label: 'CPF', maxlength: 11, mask: '###.###.###-##', type: 'tel' },
+    { name: 'birth_date', label: 'Data de Nascimento', type: 'date', component: 'AppDatePicker' },
+    { name: 'user.email', label: 'E-mail' },
+    { name: 'phone', label: 'Celular', counter: 11, maxlength: 11, type: 'tel', appendIcon: 'mdi-phone' },
+    { name: 'address', label: 'Endereço', appendIcon: 'mdi-map' }
 ]);
 
 export default createRouteResource({
     name: 'customers',
-    icon: 'mdi-tag',
+    icon: 'mdi-account',
     formSchema,
+    searchSchema: [
+        { value: 'contains[user.name]', text: 'Nome' }
+    ],
+    index: (props) => ({
+        ...props,
+        pageTitle: 'Clientes',
+        itemTitleProp: 'full_name',
+        fields: minimalFields
+    }),
     show: (props) => ({
         ...props,
-        fields
+        fields,
+        pageTitle: 'Informações do Cliente'
     }),
-    index (props) {
-        return {
-            ...props,
-            // itemTitleProp: 'full_name',
-            itemTitleProp: (model: Model) => model.user.name,
-            fields
-        };
-    }
+    create: props => ({ ...props, pageTitle: 'Cadastrar Cliente' })
 });

@@ -36,27 +36,27 @@ export function createFieldDefinition (inputSchemaProps: InputSchemaProperties) 
             inputSchemaProps.component
         );
 
-    const props = {
+    let props = {
         required,
         ...inputSchemaProps,
         label
-    };
+    } as any;
 
     delete props.component;
     delete props.listeners;
     delete props.transformValue;
 
     if (['VSelect', 'VAutocomplete'].includes(inputSchemaProps.component as string)) {
-        Object.assign(props, {
-            ...props,
+        props = {
             hideNoData: true,
             hideDetails: true,
             chips: inputSchemaProps.multiple === true,
             itemText: 'name',
             itemValue: 'id',
             search: undefined,
-            items: []
-        });
+            items: [],
+            ...props
+        };
     }
 
     return props;
@@ -86,7 +86,7 @@ export default Vue.extend({
     created () {
         this.enableAutocompleteSearch();
         this.generateFieldDefinition();
-        this.lazyLoadItemsFromCallback();
+        this.enableSelectOptions();
     },
 
     props: {
@@ -131,9 +131,14 @@ export default Vue.extend({
             return this.inputSchemaProperties.listeners;
         },
 
-        async lazyLoadItemsFromCallback () {
-            if (typeof this.inputSchemaProperties.items !== 'function') return;
+        async enableSelectOptions () {
+            if (Array.isArray(this.inputSchemaProperties.items)) {
+                this.reactiveProps.items = [...this.inputSchemaProperties.items];
 
+                return;
+            }
+
+            if (typeof this.inputSchemaProperties.items !== 'function') return;
             this.reactiveProps.loading = true;
 
             try {
