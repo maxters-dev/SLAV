@@ -2,6 +2,8 @@ import App from './App.vue';
 import Vue from 'vue';
 import Vuetify from 'vuetify';
 import router from './routes';
+import 'vuetify/dist/vuetify.min.css';
+import '@mdi/font/css/materialdesignicons.css';
 
 Vue.use(Vuetify);
 
@@ -12,11 +14,11 @@ const vuetify = new Vuetify({
         dark: false
     },
     icons: {
-        iconfont: 'mdiSvg'
+        iconfont: 'mdi'
     }
 });
 
-export default new Vue({
+new Vue({
     data: () => ({ isLoaded: document.readyState === 'complete' }),
     vuetify,
     router,
@@ -24,3 +26,5 @@ export default new Vue({
         return h(App);
     }
 }).$mount('#app');
+
+window.Vue = Vue;
