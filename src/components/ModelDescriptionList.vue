@@ -38,11 +38,12 @@
 import Vue, { PropType } from 'vue';
 import { FieldViewSchema } from '../types/schema';
 import { Model } from '../types/laravel';
+import { getModelPropValue } from '@/helpers';
 
 type FieldResult = {
     type: FieldViewSchema['type'];
     title: FieldViewSchema['name'];
-    value: string | string[];
+    value: string | string[] | Model;
 }
 
 export default Vue.extend({
@@ -73,10 +74,10 @@ export default Vue.extend({
 
     methods: {
         processFieldValue (field: FieldViewSchema, model: Model) {
-            let result = model[field.name] ?? null;
+            const result = getModelPropValue(model, field.name);
 
             if (typeof field.format === 'function') {
-                result = field.format(result, model);
+                return field.format(result, model);
             }
 
             return result;

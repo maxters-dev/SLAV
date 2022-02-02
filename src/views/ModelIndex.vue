@@ -105,6 +105,7 @@ import Vue, { PropType, VueConstructor } from 'vue';
 import { Model, Paginated } from '../types/laravel';
 import { IndexRouteProps, ResourceActionNames } from '../types/router';
 import { SearchSchema } from '@/types/schema';
+import { getModelPropValue } from '@/helpers';
 
 interface Refs
 {
@@ -119,11 +120,11 @@ function useStringOrCallback (
 ) : string | null {
     if (typeof prop === 'function') {
         return prop(model);
-    } else if (typeof prop === 'string') {
-        return model[prop];
-    }
+    } else if (typeof prop !== 'string') return null;
 
-    return null;
+    const result = getModelPropValue(model, prop);
+
+    return typeof result === 'string' ? result : null;
 }
 
 export default (Vue as VueConstructor<Vue & Refs>).extend({

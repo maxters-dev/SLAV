@@ -28,7 +28,6 @@
 </template>
 
 <script lang="ts">
-import { Model } from '@/types/laravel';
 import Vue, { PropType } from 'vue';
 import { EventBus } from '../services/event-bus';
 
@@ -36,6 +35,7 @@ import Resource from '../services/resource';
 
 import { FormSchema, InputSchema } from '../types/schema';
 import ModelFormField from '../components/ModelFormField.vue';
+import { getModelPropValue, setModelPropValue } from '@/helpers';
 
 export default Vue.extend({
 
@@ -90,25 +90,11 @@ export default Vue.extend({
     methods: {
 
         setModelPropValue (name: string, value: any) {
-            let deepValue = this.model;
-            const names: string[] = name.split('.');
-            const targetProp = names.pop() as string;
-
-            names.forEach((key: string) => {
-                deepValue = deepValue[key] as Model;
-            });
-
-            deepValue[targetProp] = value;
+            setModelPropValue(this.model, name, value);
         },
 
         getModelPropValue (name: string) {
-            let deepValue = this.model;
-
-            name.split('.').forEach((key: string) => {
-                deepValue = deepValue[key];
-            });
-
-            return deepValue;
+            return getModelPropValue(this.model, name);
         },
 
         getFormSchemaAsArray (): InputSchema[] {

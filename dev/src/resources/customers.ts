@@ -5,11 +5,11 @@ import { FieldViewSchema, FormSchema } from '../../../src/types/schema';
 
 const minimalFields: FieldViewSchema[] = [
     { title: 'Celular', name: 'phone' },
-    { title: 'E-mail', name: 'user', format: (user) => user.email }
+    { title: 'E-mail', name: 'user.email' }
 ];
 
 const fields: FieldViewSchema[] = addTimestampsFields([
-    { title: 'Nome Completo', name: 'full_name' },
+    { title: 'Nome Completo', name: 'user.name' },
     ...minimalFields,
     { title: 'Endereço', name: 'address' }
 ]);
@@ -23,7 +23,7 @@ const formSchema: FormSchema = () => ([
         itemValue: 'value',
         multiple: false,
         itemText: 'text',
-        items: [{ text: 'Masculino', value: 'M' }]
+        items: [{ text: 'Masculino', value: 'M' }, { text: 'Feminino', value: 'F' }]
     },
     { name: 'cpf', label: 'CPF', maxlength: 11, mask: '###.###.###-##', type: 'tel' },
     { name: 'birth_date', label: 'Data de Nascimento', type: 'date', component: 'AppDatePicker' },
@@ -42,7 +42,7 @@ export default createRouteResource({
     index: (props) => ({
         ...props,
         pageTitle: 'Clientes',
-        itemTitleProp: 'full_name',
+        itemTitleProp: 'user.name',
         fields: minimalFields
     }),
     show: (props) => ({
