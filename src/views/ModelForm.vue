@@ -35,7 +35,7 @@ import Resource from '../services/resource';
 
 import { FormSchema, InputSchema } from '../types/schema';
 import ModelFormField from '../components/ModelFormField.vue';
-import { getModelPropValue, setModelPropValue } from '@/helpers';
+import { getModelPropValue, setModelPropValue } from '../helpers';
 
 export default Vue.extend({
 

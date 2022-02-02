@@ -11,8 +11,8 @@
 
 <script lang="ts" >
 import Vue, { PropType } from 'vue';
-import { Model } from '@/types/laravel';
-import { InputSchema, InputSchemaProperties } from '@/types/schema';
+import { Model } from '../types/laravel';
+import { InputSchema, InputSchemaProperties } from '../types/schema';
 
 import AppDatePicker from '../components/AppDatePicker.vue';
 import {

@@ -104,8 +104,8 @@ import AppDialogConfirm from '../components/AppDialogConfirm.vue';
 import Vue, { PropType, VueConstructor } from 'vue';
 import { Model, Paginated } from '../types/laravel';
 import { IndexRouteProps, ResourceActionNames } from '../types/router';
-import { SearchSchema } from '@/types/schema';
-import { getModelPropValue } from '@/helpers';
+import { SearchSchema } from '../types/schema';
+import { getModelPropValue } from '../helpers';
 
 interface Refs
 {

@@ -1,4 +1,4 @@
-import { Model } from '@/types/laravel';
+import { Model } from '../types/laravel';
 
 export const titleCase = (value: string) => value;
 
