@@ -22,11 +22,15 @@
     </v-menu>
 </template>
 
-<script>
+<script lang="ts">
 import moment from 'moment';
+import Vue from 'vue';
 import { VMenu, VTextField, VDatePicker } from 'vuetify/lib';
 
-export default {
+export default Vue.extend({
+
+    name: 'AppDatePicker',
+
     components: { VMenu, VTextField, VDatePicker },
 
     model: {
@@ -40,24 +44,24 @@ export default {
             default: null
         },
         modelValue: {
-            type: null,
+            type: null as any,
             default: null
         }
     },
 
     data () {
         return {
-            menu: false
+            menu: false as boolean
         };
     },
 
     computed: {
         innerDateValue: {
-            set (value) {
+            set (value: string) {
                 this.$emit('update:modelValue', value);
             },
 
-            get () {
+            get (): string|null {
                 const date = moment(this.modelValue);
                 return date.isValid() ? date.format('YYYY-MM-DD') : null;
             }
@@ -65,12 +69,10 @@ export default {
     },
 
     methods: {
-        setDate (value) {
+        setDate (value: string) {
             this.$emit('update:modelValue', value);
             this.menu = false;
         }
     }
-};
+});
 </script>
-
-<style></style>
