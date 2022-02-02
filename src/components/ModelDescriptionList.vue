@@ -38,7 +38,7 @@
 import Vue, { PropType } from 'vue';
 import { FieldViewSchema } from '../types/schema';
 import { Model } from '../types/laravel';
-import { getModelPropValue } from '@/helpers';
+import { getModelPropValue } from '../helpers';
 
 type FieldResult = {
     type: FieldViewSchema['type'];
