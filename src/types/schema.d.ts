@@ -1,4 +1,4 @@
-import Vue, { Component } from 'vue';
+import Vue, { Component, RenderContext } from 'vue';
 import { Model } from './laravel';
 
 type InsideComponentParams = { model: Model; component: Vue };
@@ -17,13 +17,12 @@ export type FieldViewSchema = {
 
 export type InputSchemaProperties = {
     name: string;
-    label: string;
+    label?: string;
     type?: string;
     component?: Component | string;
-    listeners?:
-        | ((props: InsideComponentParams) => Record<string, () => any>)
-        | Record<string, () => any>;
+    listeners?: ((config: InsideComponentParams) => RenderContext['listeners']) | RenderContext['listeners'];
     transformValue?: (value: any, model: Model) => any;
+    defaultValue?: any;
 } & Record<string, any>;
 
 export type InputSchemaCallback = ((config: InsideComponentParams) => InputSchemaProperties);

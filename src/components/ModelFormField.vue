@@ -45,6 +45,7 @@ export function createFieldDefinition (inputSchemaProps: InputSchemaProperties) 
     delete props.component;
     delete props.listeners;
     delete props.transformValue;
+    delete props.defaultValue;
 
     if (['VSelect', 'VAutocomplete'].includes(inputSchemaProps.component as string)) {
         props = {
@@ -166,6 +167,7 @@ export default Vue.extend({
                 'update:search-input': searchCallback
             };
         }
+
     },
 
     computed: {

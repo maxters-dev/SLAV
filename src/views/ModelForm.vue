@@ -8,8 +8,8 @@
             <v-card-text>
                 <model-form-field
                     :input-schema="item"
-                    @update:modelValue="(value) => setModelPropValue(item.name, value)"
-                    :model-value="getModelPropValue(item.name)"
+                    @update:modelValue="(value) => setModelPropValue(item, value)"
+                    :model-value="getModelPropValue(item)"
                     :model="model"
                     v-for="item in inputSchemas" :key="item.name"
                 />
@@ -33,9 +33,10 @@ import { EventBus } from '../services/event-bus';
 
 import Resource from '../services/resource';
 
-import { FormSchema, InputSchema } from '../types/schema';
+import { FormSchema, InputSchema, InputSchemaProperties } from '../types/schema';
 import ModelFormField from '../components/ModelFormField.vue';
 import { getModelPropValue, setModelPropValue } from '../helpers';
+import { Model } from '@/types/laravel';
 
 export default Vue.extend({
 
@@ -44,7 +45,7 @@ export default Vue.extend({
 
     props: {
         formSchema: {
-            type: [Object, Function] as PropType<FormSchema>,
+            type: [Array, Function] as PropType<FormSchema>,
             required: true
         },
         pageTitle: {
@@ -83,18 +84,28 @@ export default Vue.extend({
     },
 
     async created () {
-        await this.fetchData();
+        const model = {} as Model;
+        const originalModel = await this.fetchData();
+
         this.inputSchemas = this.getFormSchemaAsArray();
+
+        this.inputSchemas.forEach(inputSchema => {
+            if (typeof inputSchema === 'function') return;
+
+            setModelPropValue(model, inputSchema.name, inputSchema.defaultValue);
+        });
+
+        this.model = { ...model, ...originalModel };
     },
 
     methods: {
 
-        setModelPropValue (name: string, value: any) {
-            setModelPropValue(this.model, name, value);
+        setModelPropValue (inputSchema: InputSchemaProperties, value: any) {
+            setModelPropValue(this.model, inputSchema.name, value);
         },
 
-        getModelPropValue (name: string) {
-            return getModelPropValue(this.model, name);
+        getModelPropValue (inputSchema: InputSchemaProperties) {
+            return getModelPropValue(this.model, inputSchema.name);
         },
 
         getFormSchemaAsArray (): InputSchema[] {
@@ -123,13 +134,17 @@ export default Vue.extend({
             this.$router.push({ name: this.indexRoute });
         },
 
-        async fetchData () {
-            if (!this.id) return;
+        mergeModel (model: object) {
+            this.model = { ...model, ...this.model };
+        },
+
+        async fetchData (): Promise<object> {
+            if (!this.id) return {};
 
             this.loading.fetch = true;
 
             try {
-                this.model = await this.resource.show(this.id);
+                return await this.resource.show(this.id);
             } finally {
                 this.loading.fetch = false;
             }
