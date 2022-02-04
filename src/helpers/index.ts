@@ -3,15 +3,20 @@ import { Model } from '../types/laravel';
 export const titleCase = (value: string) => value;
 
 export function setModelPropValue (model: Model, name: string, value: any) {
-    let deepValue = model;
-    const names: string[] = name.split('.');
-    const targetProp = names.pop() as string;
+    const keys: string[] = name.split('.');
+    let obj = model;
 
-    names.forEach((key: string) => {
-        deepValue = deepValue[key] as Model;
-    });
+    while (keys.length - 1) {
+        const key: any = keys.shift();
 
-    deepValue[targetProp] = value;
+        if (!(key in obj)) {
+            obj[key] = {};
+        }
+
+        obj = obj[key];
+    }
+
+    obj[keys[0]] = value;
 }
 
 export function getModelPropValue (model: Model, name: string) {
