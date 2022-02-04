@@ -2,7 +2,7 @@ import api from './api';
 
 const TOKEN_KEY = '@SlavToken@';
 
-type AuthUser = {
+export type AuthUser = {
     // eslint-disable-next-line camelcase
     api_token: string;
 } & Record<string, any>;
@@ -12,8 +12,8 @@ export interface AuthService {
     getUser(): Promise<AuthUser>;
     login(email: string, password: string): Promise<AuthUser>;
     logout(): void;
-    setToken (value: string): AuthService;
-    getToken (): string | null;
+    setToken(value: string): AuthService;
+    getToken(): string | null;
     removeToken(): void;
 }
 
