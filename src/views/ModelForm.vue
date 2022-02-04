@@ -5,24 +5,30 @@
         </h1>
         <v-divider class="my-5" />
         <v-card :loading="loading.fetch" :disabled="loading.fetch">
-            <v-card-text>
-                <model-form-field
-                    :input-schema="item"
-                    @update:modelValue="(value) => setModelPropValue(item, value)"
-                    :model-value="getModelPropValue(item)"
-                    :model="model"
-                    v-for="item in inputSchemas" :key="item.name"
-                />
-                <div class="d-flex justify-end">
-                    <v-btn
-                        color="primary"
-                        :loading="loading.saving"
-                        type="submit"
-                    >
-                        Salvar
-                    </v-btn>
-                </div>
-            </v-card-text>
+            <transition name="slide-y-transition" mode="out-in">
+                 <v-card-text v-if="loading.fetch" key="skeleton">
+                    <v-skeleton-loader class="mb-2" :key="x" v-for="x in 5" type="list-item" />
+                </v-card-text>
+                <v-card-text v-else key="fields">
+                    <model-form-field
+                        :input-schema="item"
+                        @update:modelValue="(value) => setModelPropValue(item, value)"
+                        :model-value="getModelPropValue(item)"
+                        :model="model"
+                        v-for="item in inputSchemas" :key="item.name"
+                    />
+                    <div class="d-flex justify-end">
+                        <v-btn
+                            color="primary"
+                            :loading="loading.saving"
+                            type="submit"
+                        >
+                            Salvar
+                        </v-btn>
+                    </div>
+                </v-card-text>
+            </transition>
+
         </v-card>
     </form>
 </template>
