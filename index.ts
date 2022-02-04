@@ -1,13 +1,15 @@
-import Resource from './src/services/resource'
+import Resource from './src/services/resource';
+import auth from './src/services/auth';
 import {
-  createRouteResource,
-  generateRoutesFromResources,
-  generateFromRouteDictionaries
-} from './src/router-resource'
+    createRouteResource,
+    generateRoutesFromResources,
+    generateFromRouteDictionaries
+} from './src/router-resource';
 
 export {
-  createRouteResource,
-  generateRoutesFromResources,
-  generateFromRouteDictionaries,
-  Resource
-}
+    createRouteResource,
+    generateRoutesFromResources,
+    generateFromRouteDictionaries,
+    Resource,
+    auth
+};
