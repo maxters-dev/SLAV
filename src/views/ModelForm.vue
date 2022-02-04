@@ -84,9 +84,8 @@ export default Vue.extend({
     },
 
     async created () {
-
         const model = {} as Model;
-        const originalModel = await this.fetchData();
+        const originalModel: Model = await this.fetchData();
 
         this.inputSchemas = this.getFormSchemaAsArray(originalModel);
 
@@ -139,8 +138,8 @@ export default Vue.extend({
             this.model = { ...model, ...this.model };
         },
 
-        async fetchData (): Promise<object> {
-            if (!this.id) return {};
+        async fetchData (): Promise<Model> {
+            if (!this.id) return {} as Model;
 
             this.loading.fetch = true;
 
