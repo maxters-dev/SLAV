@@ -1,6 +1,6 @@
 import { RawLocation, RouteConfig } from 'vue-router';
 import Resource from '../services/resource';
-import { FieldConfig, FormSchema, InputSchema, SearchSchema } from './schema';
+import { FieldViewSchema, FormSchema, InputSchema, SearchSchema } from './schema';
 
 export type CrudRouteConfigCallback = (
     config: Record<string, any>
@@ -24,7 +24,7 @@ export type FormRouteProps = {
 } & BaseRouteProps;
 
 export type IndexRouteProps = {
-    fields: FieldConfig[];
+    fields: FieldViewSchema[];
     searchSchema: SearchSchema[];
     actionNames: ResourceActionNames;
     pageTitle: string;
@@ -39,7 +39,7 @@ export type SidebarItemConfig = {
 };
 
 export type ShowRouteProps = {
-    fields: FieldConfig[];
+    fields: FieldViewSchema[];
 } & BaseRouteProps;
 
 export type ResourceRouteConfig = {
