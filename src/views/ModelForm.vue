@@ -36,7 +36,7 @@ import Resource from '../services/resource';
 import { FormSchema, InputSchema, InputSchemaProperties } from '../types/schema';
 import ModelFormField from '../components/ModelFormField.vue';
 import { getModelPropValue, setModelPropValue } from '../helpers';
-import { Model } from '@/types/laravel';
+import { Model } from '../types/laravel';
 
 export default Vue.extend({
 
@@ -84,10 +84,11 @@ export default Vue.extend({
     },
 
     async created () {
+
         const model = {} as Model;
         const originalModel = await this.fetchData();
 
-        this.inputSchemas = this.getFormSchemaAsArray();
+        this.inputSchemas = this.getFormSchemaAsArray(originalModel);
 
         this.inputSchemas.forEach(inputSchema => {
             if (typeof inputSchema === 'function') return;
@@ -108,9 +109,9 @@ export default Vue.extend({
             return getModelPropValue(this.model, inputSchema.name);
         },
 
-        getFormSchemaAsArray (): InputSchema[] {
+        getFormSchemaAsArray (model: Model): InputSchema[] {
             if (typeof this.formSchema === 'function') {
-                return this.formSchema({ model: this.model, component: this });
+                return this.formSchema({ model, component: this });
             }
 
             return this.formSchema;

@@ -1,7 +1,4 @@
 import { kebabCase } from '@lukaspolak/kebab-case';
-import ModelIndex from './views/ModelIndex.vue';
-import ModelForm from './views/ModelForm.vue';
-import ModelShow from './views/ModelShow.vue';
 import Resource from './services/resource';
 import { RouteConfig } from 'vue-router';
 import store from './store';
@@ -20,7 +17,7 @@ const generateNames = (name: string): ResourceActionNames => ({
     show: `${name}Show`
 });
 
-const createRouteResource = ({ formSchema, name, searchSchema, ...props }: ResourceRouteConfig): RouteConfigResourceDictionary => {
+function createRouteResource ({ formSchema, name, searchSchema, ...props }: ResourceRouteConfig): RouteConfigResourceDictionary {
     const slug = kebabCase(name);
     const resource = new Resource(slug);
     const actionNames = generateNames(name);
@@ -28,7 +25,7 @@ const createRouteResource = ({ formSchema, name, searchSchema, ...props }: Resou
     const resourceRoutes = {
         create: {
             path: `/${slug}/create`,
-            component: ModelForm,
+            component: () => import(/* webpackChunkName: "slav.create" */ './views/ModelForm.vue'),
             name: actionNames.create,
             props: {
                 indexRoute: actionNames.index,
@@ -42,7 +39,7 @@ const createRouteResource = ({ formSchema, name, searchSchema, ...props }: Resou
         },
         show: {
             path: `/${slug}/:id`,
-            component: ModelShow,
+            component: () => import(/* webpackChunkName: "slav.show" */ './views/ModelShow.vue'),
             name: actionNames.show,
             props: {
                 pageTitle: `Visualizando ${name.slice(0, -1)}`,
@@ -55,7 +52,7 @@ const createRouteResource = ({ formSchema, name, searchSchema, ...props }: Resou
         },
         index: {
             path: `/${slug}`,
-            component: ModelIndex,
+            component: () => import(/* webpackChunkName: "slav.index" */ './views/ModelIndex.vue'),
             name: actionNames.index,
             props: {
                 actionNames,
@@ -64,7 +61,6 @@ const createRouteResource = ({ formSchema, name, searchSchema, ...props }: Resou
                 pageTitle: name,
                 itemTitleProp: 'name',
                 searchSchema
-
             },
             meta: {
                 disabled: props.index === false
@@ -72,7 +68,7 @@ const createRouteResource = ({ formSchema, name, searchSchema, ...props }: Resou
         },
         edit: {
             path: `/${slug}/:id/edit`,
-            component: ModelForm,
+            component: () => import(/* webpackChunkName: "slav.edit" */ './views/ModelForm.vue'),
             name: actionNames.edit,
             props: {
                 formSchema,
@@ -86,29 +82,28 @@ const createRouteResource = ({ formSchema, name, searchSchema, ...props }: Resou
         }
     };
 
-  type RouteResourceKey = keyof (typeof resourceRoutes);
+    type RouteResourceKey = keyof (typeof resourceRoutes);
 
-  for (const key in resourceRoutes) {
-      const callbackProps = props[key as RouteResourceKey];
-      if (typeof callbackProps !== 'function') continue;
+    for (const key in resourceRoutes) {
+        const callbackProps = props[key as RouteResourceKey];
+        if (typeof callbackProps !== 'function') continue;
+        const route = resourceRoutes[key as RouteResourceKey];
+        const resultProps = callbackProps(route.props as any);
+        Object.assign(route.props, resultProps);
+    }
 
-      const route = resourceRoutes[key as RouteResourceKey];
-      const resultProps = callbackProps(route.props as any);
-      Object.assign(route.props, resultProps);
-  }
+    store.sidebarItems.push({
+        title: resourceRoutes.index.props.pageTitle,
+        icon: props.icon || 'mdi-link',
+        to: { name: actionNames.index }
+    });
 
-  store.sidebarItems.push({
-      title: resourceRoutes.index.props.pageTitle,
-      icon: props.icon || 'mdi-link',
-      to: { name: actionNames.index }
-  });
+    return resourceRoutes;
+}
 
-  return resourceRoutes;
-};
-
-const createRouteResources = (routeResources: ResourceRouteConfig[]) => {
+function createRouteResources (routeResources: ResourceRouteConfig[]) {
     return routeResources.map(createRouteResource);
-};
+}
 
 /**
  * Usado para gerar rotas a partir de um schema de cwrud definido {index, show, create, edit}
@@ -116,38 +111,32 @@ const createRouteResources = (routeResources: ResourceRouteConfig[]) => {
  * @param routeDicionaries
  * @returns
  */
-const generateFromRouteDictionaries = (routeDicionaries: RouteConfigResourceDictionary[]) => {
+function generateFromRouteDictionaries (routeDicionaries: RouteConfigResourceDictionary[]) {
     const routes: RouteConfig[] = [];
 
     routeDicionaries.forEach((routeDicionary: RouteConfigResourceDictionary) => {
         for (const route of Object.values(routeDicionary)) {
-            if (route?.meta?.disabled === true) continue;
+            if (route?.meta?.disabled === true) { continue; }
 
             routes.push(route);
         }
     });
 
     return routes;
-};
+}
 
-/**
- * Cria as rotas a partir de um array de configurações
- * @param routeResources
- *
- * @returns
- */
-const generateRoutesFromResources = (routeResources: ResourceRouteConfig[]) => {
+function generateRoutesFromResources (routeResources: ResourceRouteConfig[]) {
     const routes: RouteConfig[] = [];
 
     createRouteResources(routeResources).forEach((routeDicionary) => {
         for (const route of Object.values(routeDicionary)) {
-            if (route?.meta?.disabled === true) continue;
+            if (route?.meta?.disabled === true) { continue; }
             routes.push(route);
         }
     });
 
     return routes;
-};
+}
 
 export {
     createRouteResources,

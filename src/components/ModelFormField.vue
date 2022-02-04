@@ -9,7 +9,7 @@
   </div>
 </template>
 
-<script lang="ts" >
+<script lang="ts">
 import Vue, { PropType } from 'vue';
 import { Model } from '../types/laravel';
 import { InputSchema, InputSchemaProperties } from '../types/schema';
@@ -66,7 +66,6 @@ export function createFieldDefinition (inputSchemaProps: InputSchemaProperties) 
 export default Vue.extend({
     name: 'ModelFormField',
 
-    inheritAttrs: false,
 
     components: {
         VTextField,
