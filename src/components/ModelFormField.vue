@@ -50,7 +50,6 @@ export function createFieldDefinition (inputSchemaProps: InputSchemaProperties) 
     if (['VSelect', 'VAutocomplete'].includes(inputSchemaProps.component as string)) {
         props = {
             hideNoData: true,
-            hideDetails: true,
             chips: inputSchemaProps.multiple === true,
             itemText: 'name',
             itemValue: 'id',
@@ -65,7 +64,6 @@ export function createFieldDefinition (inputSchemaProps: InputSchemaProperties) 
 
 export default Vue.extend({
     name: 'ModelFormField',
-
 
     components: {
         VTextField,
