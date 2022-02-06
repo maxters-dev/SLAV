@@ -1,21 +1,43 @@
-
 import { createRouteResource } from '../../../src/router-resource';
 import { addTimestampsFields } from '../../../src/helpers/schema/ptBr';
-import { FieldViewSchema, FormSchema } from '../../../src/types/schema';
+import { FieldViewListSchema, FormSchema } from '../../../src/types/schema';
 
-const minimalFields: FieldViewSchema[] = [
+const genders = [{ text: 'Masculino', value: 'M' }, { text: 'Feminino', value: 'F' }];
+
+const detailsSchema: FieldViewListSchema = [
     { title: 'Celular', name: 'phone' },
-    { title: 'E-mail', name: 'user.email' }
+    { title: 'E-mail', name: 'user.email' },
+    { title: 'Progresso', name: 'fake_progress_field', type: 'progress', format: () => Math.random() * 100 },
+    { title: 'Avaliações', name: 'fake_rate_field', type: 'rate', format: () => Math.random() * 5 }
 ];
 
-const fields: FieldViewSchema[] = addTimestampsFields([
+const fullDetailsSchema = addTimestampsFields([
     { title: 'Nome Completo', name: 'user.name' },
-    ...minimalFields,
+    ...detailsSchema,
     { title: 'Endereço', name: 'address' }
 ]);
 
+const searchSchema = [
+    { name: 'contains[user.name]', label: 'Nome' },
+    { name: 'exact[user.email]', label: 'CPF' },
+    { name: 'contains[user.email]', label: 'E-mail', type: 'email' },
+    {
+        name: 'exact[gender]',
+        label: 'Gênero',
+        defaultValue: 'F',
+        items: [{ name: 'Todos', id: '' }, { name: 'Masculino', id: 'M' }, { name: 'Feminino', id: 'F' }],
+        component: 'VSelect'
+    }
+];
+
 const formSchema: FormSchema = () => ([
     { name: 'user.name', label: 'Nome' },
+    {
+        name: 'only_male',
+        component: 'VCheckbox',
+        label: 'Only Male',
+        dense: true
+    },
     {
         name: 'gender',
         label: 'Gênero',
@@ -23,7 +45,7 @@ const formSchema: FormSchema = () => ([
         itemValue: 'value',
         multiple: false,
         itemText: 'text',
-        items: [{ text: 'Masculino', value: 'M' }, { text: 'Feminino', value: 'F' }]
+        items: genders
     },
     { name: 'cpf', label: 'CPF', maxlength: 11, mask: '###.###.###-##', type: 'tel' },
     { name: 'birth_date', label: 'Data de Nascimento', type: 'date', component: 'AppDatePicker' },
@@ -34,21 +56,9 @@ const formSchema: FormSchema = () => ([
 
 export default createRouteResource({
     name: 'customers',
-    icon: 'mdi-account',
+    propertyTitleValue: 'user.name',
     formSchema,
-    searchSchema: [
-        { value: 'contains[user.name]', text: 'Nome' }
-    ],
-    index: (props) => ({
-        ...props,
-        pageTitle: 'Clientes',
-        itemTitleProp: 'user.name',
-        fields: minimalFields
-    }),
-    show: (props) => ({
-        ...props,
-        fields,
-        pageTitle: 'Informações do Cliente'
-    }),
-    create: props => ({ ...props, pageTitle: 'Cadastrar Cliente' })
+    searchSchema,
+    detailsSchema,
+    fullDetailsSchema
 });

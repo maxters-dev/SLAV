@@ -5,7 +5,8 @@ export type Model = {
     id: number;
 } & Record<string, any>;
 
-export type Paginated = {
+export type Paginated =
+{
     total: number;
     last_page: number;
     first_page: number;

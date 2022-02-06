@@ -11,7 +11,15 @@ Vue.config.productionTip = false;
 
 const vuetify = new Vuetify({
     theme: {
-        dark: false
+        dark: true,
+        themes: {
+            dark: {
+                primary: '#555dda'
+            },
+            light: {
+                primary: '#add555'
+            }
+        }
     },
     icons: {
         iconfont: 'mdi'
