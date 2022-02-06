@@ -1,6 +1,6 @@
 import { RawLocation, RouteConfig } from 'vue-router';
 import Resource from '../services/resource';
-import { FieldViewSchema, FormSchema, InputSchema, SearchSchema } from './schema';
+import { FieldViewListSchema, FormSchema, InputSchema, SearchSchema } from './schema';
 
 export type CrudRouteConfigCallback = (
     config: Record<string, any>
@@ -24,7 +24,7 @@ export type FormRouteProps = {
 } & BaseRouteProps;
 
 export type IndexRouteProps = {
-    fields: FieldViewSchema[];
+    fields: FieldViewListSchema;
     searchSchema: SearchSchema[];
     actionNames: ResourceActionNames;
     pageTitle: string;
@@ -34,23 +34,28 @@ export type IndexRouteProps = {
 
 export type SidebarItemConfig = {
     title: string;
-    icon: string;
     to: RawLocation;
 };
 
 export type ShowRouteProps = {
-    fields: FieldViewSchema[];
+    fields: FieldViewListSchema;
 } & BaseRouteProps;
 
 export type ResourceRouteConfig = {
     name: string;
-    formSchema: FormSchema;
-    icon?: string;
-    searchSchema?: SearchSchema[];
+    formSchema?: FormSchema;
+    searchSchema?: SearchSchema;
     create?: ((props: FormRouteProps) => FormRouteProps) | false;
     edit?: ((props: FormRouteProps) => FormRouteProps) | false;
     index?: ((props: IndexRouteProps) => IndexRouteProps) | false;
     show?: ((props: ShowRouteProps) => ShowRouteProps) | false;
+    remove?: boolean;
+    propertyTitleValue?: string | ((value: any) => string);
+    propertyImageValue?: string;
+    singularTitle?: string;
+    pluralTitle?: string;
+    fullDetailsSchema?: FieldViewListSchema;
+    detailsSchema?: FieldViewListSchema;
 };
 
 export type EditRouteProps = FormRouteProps;

@@ -1,54 +1,63 @@
 <template>
-    <form @submit.prevent="submit">
-        <v-row align="center">
-            <v-col :md="7">
-                <v-text-field
-                    v-model="searchValue"
-                    placeholder="Pesquisar"
-                    append-icon="mdi-magnify"
-                    @click:append="submit"
-                />
-            </v-col>
-            <v-col>
-                <v-select
-                    v-model="searchField"
-                    :items="searchSchema"
-                    item-value="value"
-                    item-text="text"
-                />
-            </v-col>
-            <v-col cols="auto">
-                <v-btn type="submit" color="primary"> Pesquisar </v-btn>
-            </v-col>
-        </v-row>
-    </form>
+    <v-card class="mb-5" dense elevation="1">
+        <v-card-text>
+            <form @submit.prevent="submit">
+                <v-row align="center">
+                    <template v-for="(input, key) in searchSchema" >
+                        <v-col :key="key" v-if="!input.hidden">
+                            <model-form-field :model="search" v-model.trim="search[input.name]" :inputSchema="input"></model-form-field>
+                        </v-col>
+                    </template>
+                    <v-col cols="auto">
+                        <v-btn icon type="submit" color="primary">
+                            <v-icon>mdi-magnify</v-icon>
+                        </v-btn>
+                    </v-col>
+                </v-row>
+            </form>
+        </v-card-text>
+    </v-card>
 </template>
 
 <script lang="ts">
+import Vue from 'vue';
+import { PropType } from 'vue/types/umd';
 import { SearchSchema } from '../types/schema';
-import Vue, { PropType } from 'vue';
-
+import ModelFormField from './ModelFormField.vue';
 export default Vue.extend({
+    components: { ModelFormField },
     name: 'ModelSearch',
-
     props: {
-        searchSchema: {
-            type: Array as PropType<SearchSchema[]>,
-            required: true
+        searchSchema: Array as PropType<SearchSchema>
+    },
+
+    computed: {
+        filteredSearch (): {[key: string]: string} {
+            const filteredEntries = Object.entries(this.search).filter(([, value]) => !!value);
+            return Object.fromEntries(filteredEntries);
         }
     },
 
     data () {
         return {
-            searchValue: '' as string,
-            searchField: this.searchSchema[0].value as string
+            search: {} as {[key: string]: string}
         };
+    },
+
+    created () {
+        this.searchSchema.forEach((search) => {
+            this.search[search.name] = search.defaultValue;
+            console.log(search.defaultValue);
+        });
+
+        console.log(this.search);
     },
 
     methods: {
         submit () {
-            this.$emit('submit', { [this.searchField]: this.searchValue });
+            this.$emit('submit', this.filteredSearch);
         }
     }
+
 });
 </script>

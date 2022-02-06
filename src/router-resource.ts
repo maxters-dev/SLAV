@@ -9,6 +9,8 @@ import {
     RouteConfigResourceDictionary,
     ShowRouteProps
 } from './types/router';
+import { titleCase } from './helpers';
+import { genderOfWord } from './helpers/schema/ptBr';
 
 const generateNames = (name: string): ResourceActionNames => ({
     create: `${name}Create`,
@@ -17,10 +19,17 @@ const generateNames = (name: string): ResourceActionNames => ({
     show: `${name}Show`
 });
 
-function createRouteResource ({ formSchema, name, searchSchema, ...props }: ResourceRouteConfig): RouteConfigResourceDictionary {
+function createRouteResource (
+    { formSchema = [], name, searchSchema, ...props }: ResourceRouteConfig
+): RouteConfigResourceDictionary {
     const slug = kebabCase(name);
     const resource = new Resource(slug);
     const actionNames = generateNames(name);
+    const propertyTitleValue = props.propertyTitleValue ?? 'name';
+    const indexPageTitle = props.pluralTitle ?? titleCase(slug.replace(/-/g, ' '));
+    const pageShowTitle = props.singularTitle
+        ? `Detalhes ${genderOfWord(props.singularTitle) === 'f' ? 'da' : 'do'} ${props.singularTitle}`
+        : 'Detalhes';
 
     const resourceRoutes = {
         create: {
@@ -42,9 +51,10 @@ function createRouteResource ({ formSchema, name, searchSchema, ...props }: Reso
             component: () => import(/* webpackChunkName: "slav.show" */ './views/ModelShow.vue'),
             name: actionNames.show,
             props: {
-                pageTitle: `Visualizando ${name.slice(0, -1)}`,
+                propertyTitleValue,
+                pageTitle: pageShowTitle,
                 resource,
-                fields: [] as ShowRouteProps['fields']
+                fields: props.fullDetailsSchema ?? [] as ShowRouteProps['fields']
             },
             meta: {
                 disabled: props.show === false
@@ -56,11 +66,12 @@ function createRouteResource ({ formSchema, name, searchSchema, ...props }: Reso
             name: actionNames.index,
             props: {
                 actionNames,
-                fields: [] as IndexRouteProps['fields'],
+                fields: props.detailsSchema ?? props.fullDetailsSchema ?? [] as IndexRouteProps['fields'],
                 resource,
-                pageTitle: name,
-                itemTitleProp: 'name',
-                searchSchema
+                pageTitle: indexPageTitle,
+                propertyTitleValue,
+                searchSchema,
+                removeEnabled: props.remove ?? true
             },
             meta: {
                 disabled: props.index === false
@@ -73,7 +84,7 @@ function createRouteResource ({ formSchema, name, searchSchema, ...props }: Reso
             props: {
                 formSchema,
                 indexRoute: actionNames.index,
-                pageTitle: `Editando ${name.slice(0, -1)}`,
+                pageTitle: `Editando ${props.singularTitle || name}`,
                 resource
             },
             meta: {
@@ -94,8 +105,9 @@ function createRouteResource ({ formSchema, name, searchSchema, ...props }: Reso
 
     store.sidebarItems.push({
         title: resourceRoutes.index.props.pageTitle,
-        icon: props.icon || 'mdi-link',
-        to: { name: actionNames.index }
+        to: {
+            name: actionNames.index
+        }
     });
 
     return resourceRoutes;
@@ -105,12 +117,6 @@ function createRouteResources (routeResources: ResourceRouteConfig[]) {
     return routeResources.map(createRouteResource);
 }
 
-/**
- * Usado para gerar rotas a partir de um schema de cwrud definido {index, show, create, edit}
- *
- * @param routeDicionaries
- * @returns
- */
 function generateFromRouteDictionaries (routeDicionaries: RouteConfigResourceDictionary[]) {
     const routes: RouteConfig[] = [];
 

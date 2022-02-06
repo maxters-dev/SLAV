@@ -36,7 +36,7 @@
                 <v-btn v-if="routeExists(editRoute.name)" icon :to="editRoute">
                     <v-icon> mdi-pencil </v-icon>
                 </v-btn>
-                <v-btn icon @click="remove">
+                <v-btn icon @click="remove" v-if="removeEnabled">
                     <v-icon>mdi-delete</v-icon>
                 </v-btn>
             </div>
@@ -84,6 +84,10 @@ export default {
         date: {
             type: [Date, String],
             default: null
+        },
+
+        removeEnabled: {
+            type: Boolean
         }
     },
 

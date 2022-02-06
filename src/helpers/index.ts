@@ -1,6 +1,9 @@
 import { Model } from '../types/laravel';
 
-export const titleCase = (value: string) => value;
+export const titleCase = (word: string) =>
+    word.replace(/\w\S*/g,
+        (txt) => txt.charAt(0).toUpperCase() + txt.substring(1).toLowerCase()
+    );
 
 export function setModelPropValue (model: Model, name: string, value: any) {
     const keys: string[] = name.split('.');

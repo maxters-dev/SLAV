@@ -7,7 +7,7 @@
 
     <div class="d-flex justify-end mb-5">
       <v-btn
-        v-if="$router.match({name: actionNames.create}).matched.length > 0"
+        v-if="$router.match({ name: actionNames.create }).matched.length > 0"
         small
         color="primary"
         fab
@@ -28,28 +28,15 @@
 
     <template v-if="loading.fetch">
       <v-row>
-        <v-col
-          v-for="i in 8"
-          :key="i"
-          :lg="3"
-          :md="6"
-          :cols="12"
-        >
-          <v-skeleton-loader
-            type="card"
-          />
+        <v-col v-for="i in 8" :key="i" :lg="3" :md="6" :cols="12">
+          <v-skeleton-loader type="card" />
         </v-col>
       </v-row>
     </template>
     <template v-else-if="models">
       <v-alert>
-        <v-layout
-          justify-space-between
-          align-center
-        >
-          <div>
-            Página {{ models.current_page }} de {{ models.last_page }}
-          </div>
+        <v-layout justify-space-between align-center>
+          <div>Página {{ models.current_page }} de {{ models.last_page }}</div>
           <div>
             Total de
             {{ models.total }}
@@ -65,30 +52,25 @@
           :md="6"
           :cols="12"
         >
-          <slot
-            name="model"
-            v-bind="{ model }"
-          >
+          <slot name="model" v-bind="{ model }">
             <model-list-item
               :edit-route="{ name: actionNames.edit, params: { id: model.id } }"
               :show-route="{ name: actionNames.show, params: { id: model.id } }"
               :fields="fields"
               :model="model"
+              :remove-enabled="removeEnabled"
               v-bind="{ ...preparedModel(model) }"
               @removed="() => remove(model)"
             />
           </slot>
         </v-col>
       </v-row>
-      <div
-        v-if="models.last_page > 1"
-        class="mt-5"
-      >
+      <div v-if="models.last_page > 1" class="mt-5">
         <v-pagination
           v-model="models.current_page"
           :length="models.last_page"
           circle
-          @input="(page) => paginate({page})"
+          @input="(page) => paginate({ page })"
         />
       </div>
     </template>
@@ -96,28 +78,26 @@
 </template>
 
 <script lang="ts">
-
 import Resource from '../services/resource';
 import ModelSearch from '../components/ModelSearch.vue';
 import ModelListItem from '../components/ModelListItem.vue';
 import AppDialogConfirm from '../components/AppDialogConfirm.vue';
 import Vue, { PropType, VueConstructor } from 'vue';
 import { Model, Paginated } from '../types/laravel';
-import { IndexRouteProps, ResourceActionNames } from '../types/router';
+import { IndexRouteProps, ResourceActionNames, ResourceRouteConfig } from '../types/router';
 import { SearchSchema } from '../types/schema';
 import { getModelPropValue } from '../helpers';
 
-interface Refs
-{
-    $refs: {
-        confirm: InstanceType<typeof AppDialogConfirm>,
-    }
+interface Refs {
+  $refs: {
+    confirm: InstanceType<typeof AppDialogConfirm>;
+  };
 }
 
 function useStringOrCallback (
     model: Model,
-    prop: IndexRouteProps['itemTitleProp'] | IndexRouteProps['itemImageProp']
-) : string | null {
+    prop: ResourceRouteConfig['propertyTitleValue'] | ResourceRouteConfig['propertyImageName']
+): string | null {
     if (typeof prop === 'function') {
         return prop(model);
     } else if (typeof prop !== 'string') return null;
@@ -128,7 +108,6 @@ function useStringOrCallback (
 }
 
 export default (Vue as VueConstructor<Vue & Refs>).extend({
-
     name: 'ModelList',
     components: {
         AppDialogConfirm,
@@ -147,16 +126,23 @@ export default (Vue as VueConstructor<Vue & Refs>).extend({
             required: true
         },
 
+        removeEnabled: {
+            type: Boolean,
+            default: true
+        },
+
         actionNames: {
             type: Object as PropType<ResourceActionNames>,
             required: true
         },
-        itemTitleProp: {
-            type: [String, Function] as PropType<IndexRouteProps['itemTitleProp']>,
+
+        propertyTitleValue: {
+            type: [String, Function] as PropType<ResourceRouteConfig['propertyTitleValue']>,
             default: 'name'
         },
-        itemImageProp: {
-            type: Object as PropType<IndexRouteProps['itemImageProp']>,
+
+        propertyImageValue: {
+            type: Object as PropType<ResourceRouteConfig['propertyImageValue']>,
             default: null
         },
 
@@ -190,11 +176,10 @@ export default (Vue as VueConstructor<Vue & Refs>).extend({
     },
 
     methods: {
-
         preparedModel (model: Model) {
             return {
-                title: useStringOrCallback(model, this.itemTitleProp),
-                image: useStringOrCallback(model, this.itemImageProp)
+                title: useStringOrCallback(model, this.propertyTitleValue),
+                image: useStringOrCallback(model, this.propertyImageValue)
             };
         },
 
@@ -220,7 +205,6 @@ export default (Vue as VueConstructor<Vue & Refs>).extend({
 
             this.models.data.splice(index, 1);
         }
-
     }
 });
 </script>

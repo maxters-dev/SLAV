@@ -5,6 +5,7 @@
       v-model="value"
       v-bind="reactiveProps"
       v-on="listeners"
+      ref="input"
     />
   </div>
 </template>
@@ -17,50 +18,14 @@ import { InputSchema, InputSchemaProperties } from '../types/schema';
 import AppDatePicker from '../components/AppDatePicker.vue';
 import {
     VAutocomplete,
+    VCheckbox,
     VTextField,
     VTextarea,
     VSelect,
     VChip,
     VSwitch
 } from 'vuetify/lib';
-
-import { titleCase } from '../helpers';
-
-export function createFieldDefinition (inputSchemaProps: InputSchemaProperties) {
-    const label = titleCase(
-        inputSchemaProps.label || inputSchemaProps.placeholder || inputSchemaProps.name
-    );
-
-    const required = typeof inputSchemaProps.component === 'string' &&
-        ['VTextarea', 'VSelect', 'VTextField'].includes(
-            inputSchemaProps.component
-        );
-
-    let props = {
-        required,
-        ...inputSchemaProps,
-        label
-    } as any;
-
-    delete props.component;
-    delete props.listeners;
-    delete props.transformValue;
-    delete props.defaultValue;
-
-    if (['VSelect', 'VAutocomplete'].includes(inputSchemaProps.component as string)) {
-        props = {
-            hideNoData: true,
-            chips: inputSchemaProps.multiple === true,
-            itemText: 'name',
-            itemValue: 'id',
-            search: undefined,
-            items: [],
-            ...props
-        };
-    }
-
-    return props;
-}
+import { titleCase } from '@/helpers';
 
 export default Vue.extend({
     name: 'ModelFormField',
@@ -70,6 +35,7 @@ export default Vue.extend({
         VTextarea,
         VSelect,
         VChip,
+        VCheckbox,
         VSwitch,
         AppDatePicker,
         VAutocomplete
@@ -107,8 +73,38 @@ export default Vue.extend({
     },
 
     methods: {
+        createFieldDefinition () {
+            const inputSchemaProps = this.inputSchemaProperties;
+
+            const required = ['VTextarea', 'VSelect', 'VTextField'].includes(inputSchemaProps.component as string);
+
+            let props = {
+                required,
+                label: titleCase(inputSchemaProps.name),
+                ...inputSchemaProps
+            } as any;
+
+            delete props.component;
+            delete props.listeners;
+            delete props.transformValue;
+            delete props.defaultValue;
+
+            if (['VSelect', 'VAutocomplete'].includes(inputSchemaProps.component as string)) {
+                props = {
+                    hideNoData: true,
+                    chips: inputSchemaProps.multiple === true,
+                    itemText: 'name',
+                    itemValue: 'id',
+                    search: undefined,
+                    items: [],
+                    ...props
+                };
+            }
+
+            return props;
+        },
         generateFieldDefinition () {
-            const props = createFieldDefinition(this.inputSchemaProperties);
+            const props = this.createFieldDefinition();
 
             if (this.inputSchemaProperties.transformValue) {
                 this.value = this.inputSchemaProperties.transformValue(this.value, this.model);
@@ -131,8 +127,7 @@ export default Vue.extend({
 
         async enableSelectOptions () {
             if (Array.isArray(this.inputSchemaProperties.items)) {
-                this.reactiveProps.items = [...this.inputSchemaProperties.items];
-
+                this.reactiveProps.items = this.inputSchemaProperties.items;
                 return;
             }
 

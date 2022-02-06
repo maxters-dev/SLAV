@@ -15,7 +15,7 @@
                         @update:modelValue="(value) => setModelPropValue(item, value)"
                         :model-value="getModelPropValue(item)"
                         :model="model"
-                        v-for="item in inputSchemas" :key="item.name"
+                        v-for="(item, key) in inputSchemas" :key="`model-form-field-${key}`"
                     />
                     <div class="d-flex justify-end">
                         <v-btn

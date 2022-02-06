@@ -1,24 +1,22 @@
 import Vue, { Component, RenderContext } from 'vue';
 import { Model } from './laravel';
 
-type InsideComponentParams = { model: Model; component: Vue };
-
-export type SearchSchema = {
-    value: string;
-    text: string;
-};
+export type InsideComponentParams = { model: Model; component: Vue };
 
 export type FieldViewSchema = {
     name: string;
     title: string;
-    type?: string;
-    format?: (value: any, model: Record<string, any>) => string | string[];
+    type?: 'image' | 'html' | 'progress' | 'rate';
+    format?: (value: any, model: Record<string, any>) => string | string[] | number;
 };
+
+export type FieldViewListSchema = FieldViewSchema[]
 
 export type InputSchemaProperties = {
     name: string;
     label?: string;
     type?: string;
+    hidden?: boolean;
     component?: Component | string;
     listeners?: ((config: InsideComponentParams) => RenderContext['listeners']) | RenderContext['listeners'];
     transformValue?: (value: any, model: Model) => any;
@@ -30,5 +28,7 @@ export type InputSchemaCallback = ((config: InsideComponentParams) => InputSchem
 export type InputSchema =
     | InputSchemaProperties
     | InputSchemaCallback;
+
+export type SearchSchema = InputSchemaProperties[]
 
 export type FormSchema = InputSchema[] | ((config: InsideComponentParams) => InputSchema[])
