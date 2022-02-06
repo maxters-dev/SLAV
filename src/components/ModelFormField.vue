@@ -25,7 +25,7 @@ import {
     VChip,
     VSwitch
 } from 'vuetify/lib';
-import { titleCase } from '@/helpers';
+import { titleCase } from '../helpers';
 
 export default Vue.extend({
     name: 'ModelFormField',
