@@ -1,5 +1,6 @@
 <template>
     <v-card height="100%" class="d-flex flex-column">
+
         <v-img
             v-if="image"
             :src="image"
@@ -25,18 +26,18 @@
             </span>
             <div>
                 <v-btn
-                    v-if="routeExists(showRoute.name)"
+                    v-if="hasPermission('show', showRoute)"
                     small
                     icon
-                    title="Adicionar novo registro"
+                    title="Visualizar"
                     :to="showRoute"
                 >
                     <v-icon>mdi-alert-circle</v-icon>
                 </v-btn>
-                <v-btn v-if="routeExists(editRoute.name)" icon :to="editRoute">
-                    <v-icon> mdi-pencil </v-icon>
+                <v-btn v-if="hasPermission('edit', editRoute)" icon :to="editRoute">
+                    <v-icon>mdi-pencil</v-icon>
                 </v-btn>
-                <v-btn icon @click="remove" v-if="removeEnabled">
+                <v-btn icon @click="remove" v-if="hasPermission('remove') && currentRouteMeta.enableRemove">
                     <v-icon>mdi-delete</v-icon>
                 </v-btn>
             </div>
@@ -44,11 +45,14 @@
     </v-card>
 </template>
 
-<script>
+<script lang="ts">
+import Vue, { PropType } from 'vue';
 import moment from 'moment';
 import ModelDescriptionList from './ModelDescriptionList.vue';
+import { RouteMeta } from 'vue-router';
+import { Authorizations } from '@/types/router';
 
-export default {
+export default Vue.extend({
     components: { ModelDescriptionList },
     props: {
         editRoute: {
@@ -86,20 +90,42 @@ export default {
             default: null
         },
 
-        removeEnabled: {
-            type: Boolean
-        }
+        removeEnabled: Boolean,
+
+        actionsAuthorization: Object as PropType<Authorizations>
     },
 
     methods: {
-        routeExists (name) {
+        moment,
+        routeExists (name: string) {
             return this.$router.match({ name }).matched.length > 0;
         },
-        remove () {
-            this.$emit('removed');
+        getRouteMeta (name: string): RouteMeta {
+            const result = this.$router.match({ name }).meta || {};
+            return result;
         },
 
-        moment
+        hasPermission (actionKey: string, route?: any): boolean {
+            const callback = this.actionsAuthorization[actionKey];
+
+            if (typeof callback === 'function') {
+                return callback(this.model);
+            }
+
+            if (!route) return true;
+
+            return this.getRouteMeta(route.name).enabled;
+        },
+
+        remove () {
+            this.$emit('removed');
+        }
+    },
+
+    computed: {
+        currentRouteMeta (): RouteMeta {
+            return this.$route.meta ?? {};
+        }
     }
-};
+});
 </script>

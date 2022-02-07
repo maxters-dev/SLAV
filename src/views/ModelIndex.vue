@@ -7,7 +7,7 @@
 
     <div class="d-flex justify-end mb-5">
       <v-btn
-        v-if="$router.match({ name: actionNames.create }).matched.length > 0"
+        v-if="routeIsEnabled(actionNames.create)"
         small
         color="primary"
         fab
@@ -57,9 +57,10 @@
             <model-list-item
               :edit-route="{ name: actionNames.edit, params: { id: model.id } }"
               :show-route="{ name: actionNames.show, params: { id: model.id } }"
+              :actionsAuthorization="actionsAuthorization"
+              :action-names="actionNames"
               :fields="fields"
               :model="model"
-              :remove-enabled="removeEnabled"
               v-bind="{ ...preparedModel(model) }"
               @removed="() => remove(model)"
             />
@@ -85,7 +86,7 @@ import ModelListItem from '../components/ModelListItem.vue';
 import AppDialogConfirm from '../components/AppDialogConfirm.vue';
 import Vue, { PropType, VueConstructor } from 'vue';
 import { Model, Paginated } from '../types/laravel';
-import { IndexRouteProps, ResourceActionNames, ResourceRouteConfig } from '../types/router';
+import { Authorizations, IndexRouteProps, ResourceActionNames, ResourceRouteConfig } from '../types/router';
 import { SearchSchema } from '../types/schema';
 import { getModelPropValue } from '../helpers';
 
@@ -155,6 +156,11 @@ export default (Vue as VueConstructor<Vue & Refs>).extend({
         searchSchema: {
             type: Array as PropType<SearchSchema[]>,
             default: () => []
+        },
+
+        handleAuthorizations: {
+            type: Function as PropType<ResourceRouteConfig['handleAuthorizations']>,
+            default: null
         }
     },
 
@@ -162,36 +168,45 @@ export default (Vue as VueConstructor<Vue & Refs>).extend({
         return {
             models: { data: [] as Model[] } as Paginated,
             loading: { fetch: false },
-            searchParams: {}
+            searchParams: {},
+
+            actionsAuthorization: {} as Authorizations
         };
     },
 
     watch: {
-        $route () {
-            this.models = { data: [] as Model[] } as Paginated;
-            this.fetch();
+        '$route.path': {
+            immediate: true,
+            handler () {
+                this.startup();
+            }
         }
     },
 
-    created () {
-        this.fetch();
-    },
-
     methods: {
+        async startup () {
+            this.models = { data: [] as Model[] } as Paginated;
+            this.actionsAuthorization = {};
 
-        fetch () {
-            if (this.searchSchema.length === 0) {
-                this.paginate({ page: 1 });
-                return;
+            if (this.handleAuthorizations) {
+                this.actionsAuthorization = await this.handleAuthorizations();
             }
 
-            console.log(this.searchParams);
+            if (this.searchSchema.length === 0) {
+                this.paginate({ page: 1 });
+            }
         },
         preparedModel (model: Model) {
             return {
                 title: useStringOrCallback(model, this.propertyTitleValue),
                 image: useStringOrCallback(model, this.propertyImageValue)
             };
+        },
+
+        routeIsEnabled (name: string) {
+            const route = this.$router.match({ name });
+
+            return route?.meta?.enabled === true;
         },
 
         async paginate (params: any = {}) {

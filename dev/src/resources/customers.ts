@@ -1,6 +1,7 @@
 import { createRouteResource } from '../../../src/router-resource';
 import { addTimestampsFields } from '../../../src/helpers/schema/ptBr';
 import { FieldViewListSchema, FormSchema } from '../../../src/types/schema';
+import authSessionService from '../../../src/services/auth';
 
 const genders = [{ text: 'Masculino', value: 'M' }, { text: 'Feminino', value: 'F' }];
 
@@ -60,5 +61,11 @@ export default createRouteResource({
     formSchema,
     searchSchema,
     detailsSchema,
-    fullDetailsSchema
+    fullDetailsSchema,
+    async handleAuthorizations () {
+        const user = await authSessionService.getUser(true);
+        return {
+            edit: (model) => [2, 3].includes(user.role_id) && model.user_creator_id === user.id
+        };
+    }
 });

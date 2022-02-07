@@ -1,5 +1,6 @@
 import { RawLocation, RouteConfig } from 'vue-router';
 import Resource from '../services/resource';
+import { Model } from './laravel';
 import { FieldViewListSchema, FormSchema, InputSchema, SearchSchema } from './schema';
 
 export type CrudRouteConfigCallback = (
@@ -41,6 +42,8 @@ export type ShowRouteProps = {
     fields: FieldViewListSchema;
 } & BaseRouteProps;
 
+export type Authorizations = { [key: string]: (model: Model) => boolean };
+
 export type ResourceRouteConfig = {
     name: string;
     formSchema?: FormSchema;
@@ -56,6 +59,7 @@ export type ResourceRouteConfig = {
     pluralTitle?: string;
     fullDetailsSchema?: FieldViewListSchema;
     detailsSchema?: FieldViewListSchema;
+    handleAuthorizations?: (() => Promise<Authorizations>);
 };
 
 export type EditRouteProps = FormRouteProps;

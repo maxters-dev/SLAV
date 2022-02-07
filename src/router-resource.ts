@@ -27,6 +27,7 @@ function createRouteResource (
     const actionNames = generateNames(name);
     const propertyTitleValue = props.propertyTitleValue ?? 'name';
     const indexPageTitle = props.pluralTitle ?? titleCase(slug.replace(/-/g, ' '));
+    const pageCreateTitle = `Cadastrar${props.singularTitle ? props.singularTitle : ''}`;
     const pageShowTitle = props.singularTitle
         ? `Detalhes ${genderOfWord(props.singularTitle) === 'f' ? 'da' : 'do'} ${props.singularTitle}`
         : 'Detalhes';
@@ -34,21 +35,19 @@ function createRouteResource (
     const resourceRoutes = {
         create: {
             path: `/${slug}/create`,
-            component: () => import(/* webpackChunkName: "slav.create" */ './views/ModelForm.vue'),
+            component: () => import('./views/ModelForm.vue'),
             name: actionNames.create,
             props: {
                 indexRoute: actionNames.index,
                 formSchema,
-                pageTitle: `Novo ${name.slice(0, -1)}`,
+                pageTitle: pageCreateTitle,
                 resource
             },
-            meta: {
-                disabled: props.create === false
-            }
+            meta: { enabled: props.create !== false }
         },
         show: {
             path: `/${slug}/:id`,
-            component: () => import(/* webpackChunkName: "slav.show" */ './views/ModelShow.vue'),
+            component: () => import('./views/ModelShow.vue'),
             name: actionNames.show,
             props: {
                 propertyTitleValue,
@@ -56,13 +55,11 @@ function createRouteResource (
                 resource,
                 fields: props.fullDetailsSchema ?? [] as ShowRouteProps['fields']
             },
-            meta: {
-                disabled: props.show === false
-            }
+            meta: { enabled: props.show !== false }
         },
         index: {
             path: `/${slug}`,
-            component: () => import(/* webpackChunkName: "slav.index" */ './views/ModelIndex.vue'),
+            component: () => import('./views/ModelIndex.vue'),
             name: actionNames.index,
             props: {
                 actionNames,
@@ -71,15 +68,16 @@ function createRouteResource (
                 pageTitle: indexPageTitle,
                 propertyTitleValue,
                 searchSchema,
-                removeEnabled: props.remove ?? true
+                handleAuthorizations: props.handleAuthorizations
             },
             meta: {
-                disabled: props.index === false
+                enabled: true,
+                enableRemove: props.remove ?? true
             }
         },
         edit: {
             path: `/${slug}/:id/edit`,
-            component: () => import(/* webpackChunkName: "slav.edit" */ './views/ModelForm.vue'),
+            component: () => import('./views/ModelForm.vue'),
             name: actionNames.edit,
             props: {
                 formSchema,
@@ -87,9 +85,7 @@ function createRouteResource (
                 pageTitle: `Editando ${props.singularTitle || name}`,
                 resource
             },
-            meta: {
-                disabled: props.edit === false
-            }
+            meta: { enabled: props.edit !== false }
         }
     };
 
@@ -122,8 +118,6 @@ function generateFromRouteDictionaries (routeDicionaries: RouteConfigResourceDic
 
     routeDicionaries.forEach((routeDicionary: RouteConfigResourceDictionary) => {
         for (const route of Object.values(routeDicionary)) {
-            if (route?.meta?.disabled === true) { continue; }
-
             routes.push(route);
         }
     });
@@ -136,7 +130,6 @@ function generateRoutesFromResources (routeResources: ResourceRouteConfig[]) {
 
     createRouteResources(routeResources).forEach((routeDicionary) => {
         for (const route of Object.values(routeDicionary)) {
-            if (route?.meta?.disabled === true) { continue; }
             routes.push(route);
         }
     });

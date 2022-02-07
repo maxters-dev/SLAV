@@ -1,10 +1,5 @@
 import { createRouteResource } from '../../../src/router-resource';
 
-/**
- * Definir as propriedades do show como array
- * Definir as propriedades do index como array
- *
- */
 export default createRouteResource({
     name: 'customerObjectiveItems',
     propertyTitleValue: 'month_year',
@@ -20,11 +15,11 @@ export default createRouteResource({
         { name: 'value', label: 'Valor', prefix: 'R$', type: 'number', step: 0.01 }
     ],
     searchSchema: [
-        { name: 'exact[year]', label: 'Ano', defaultValue: new Date().getFullYear() },
+        { name: 'exact[year]', label: 'Ano', _defaultValue: new Date().getFullYear() },
         {
             name: 'exact[month]',
             label: 'Mês',
-            defaultValue: new Date().getMonth() + 1,
+            _defaultValue: new Date().getMonth() + 1,
             component: 'VSelect',
             itemText: 'text',
             itemValue: 'value',

@@ -7,9 +7,11 @@ export type AuthUser = {
     api_token: string;
 } & Record<string, any>;
 
+let cachedUser: AuthUser|null = null;
+
 export interface AuthService {
     attempt(email: string, password: string): Promise<AuthUser>;
-    getUser(): Promise<AuthUser>;
+    getUser(enableCache: boolean): Promise<AuthUser>;
     login(email: string, password: string): Promise<AuthUser>;
     logout(): void;
     setToken(value: string): AuthService;
@@ -18,7 +20,6 @@ export interface AuthService {
 }
 
 const authSessionService: AuthService = {
-
     getToken (): string | null {
         return sessionStorage.getItem(TOKEN_KEY);
     },
@@ -29,10 +30,16 @@ const authSessionService: AuthService = {
     removeToken (): void {
         sessionStorage.removeItem(TOKEN_KEY);
     },
-    async getUser (): Promise<AuthUser> {
+    async getUser (enableCache = false): Promise<AuthUser> {
+        if (enableCache === true && cachedUser) {
+            return cachedUser;
+        }
         const { data } = await api.get('users/me');
-        return data as AuthUser;
+        cachedUser = data as AuthUser;
+        setTimeout(() => { cachedUser = null; }, 1000 * 60 * 5);
+        return cachedUser;
     },
+
     logout (): void {
         this.removeToken();
     },

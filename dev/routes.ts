@@ -12,8 +12,7 @@ const adminRoutes = generateFromRouteDictionaries([
     customers,
     customerObjectiveItems
 ]);
-
-export default new VueRouter({
+const router = new VueRouter({
     mode: 'history',
     routes: [
         {
@@ -28,3 +27,5 @@ export default new VueRouter({
         }
     ]
 });
+
+export default router;
