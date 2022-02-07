@@ -135,7 +135,7 @@ export default Vue.extend({
             this.reactiveProps.loading = true;
 
             try {
-                const items: Model[] = await this.inputSchemaProperties.items();
+                const items: Model[] = await this.inputSchemaProperties.items(this.model);
                 this.reactiveProps.items = items;
             } finally {
                 this.reactiveProps.loading = false;
@@ -148,7 +148,7 @@ export default Vue.extend({
                 this.reactiveProps.loading = true;
 
                 try {
-                    this.reactiveProps.items = await this.inputSchemaProperties.search(term);
+                    this.reactiveProps.items = await this.inputSchemaProperties.search(term, this.model);
                 } finally {
                     this.reactiveProps.loading = false;
                 }
