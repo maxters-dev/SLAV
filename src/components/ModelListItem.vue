@@ -50,7 +50,7 @@ import Vue, { PropType } from 'vue';
 import moment from 'moment';
 import ModelDescriptionList from './ModelDescriptionList.vue';
 import { RouteMeta } from 'vue-router';
-import { Authorizations } from '@/types/router';
+import { Authorizations } from '../types/router';
 
 export default Vue.extend({
     components: { ModelDescriptionList },
