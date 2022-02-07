@@ -24,38 +24,63 @@ import Vue from 'vue';
 import { PropType } from 'vue/types/umd';
 import { SearchSchema } from '../types/schema';
 import ModelFormField from './ModelFormField.vue';
+
+const isEmpty = (value: string): boolean => {
+    if (typeof value === 'string' && value === '') return true;
+
+    return value === null || value === undefined;
+};
+
 export default Vue.extend({
     components: { ModelFormField },
     name: 'ModelSearch',
+    model: {
+        prop: 'modelValue',
+        event: 'update:modelValue'
+    },
     props: {
-        searchSchema: Array as PropType<SearchSchema>
+        modelValue: {
+            type: Object as PropType<{[key: string]: string}>,
+            required: true
+        },
+        searchSchema: {
+            type: Array as PropType<SearchSchema>,
+            required: true
+        }
     },
 
     computed: {
         filteredSearch (): {[key: string]: string} {
-            const filteredEntries = Object.entries(this.search).filter(([, value]) => !!value);
+            const filteredEntries = Object.entries(this.search).filter(([, value]) => !isEmpty(value));
             return Object.fromEntries(filteredEntries);
         }
     },
+    created () {
+        this.submit();
+    },
 
     data () {
+        const search = Object.fromEntries(this.searchSchema.map((search) => {
+            return [search.name, search.defaultValue];
+        }));
+
         return {
-            search: {} as {[key: string]: string}
+            search: search as {[key: string]: string}
         };
     },
 
-    created () {
-        this.searchSchema.forEach((search) => {
-            this.search[search.name] = search.defaultValue;
-            console.log(search.defaultValue);
-        });
-
-        console.log(this.search);
+    methods: {
+        submit (): void {
+            this.$emit('submit', this.filteredSearch);
+        }
     },
 
-    methods: {
-        submit () {
-            this.$emit('submit', this.filteredSearch);
+    watch: {
+        filteredSearch: {
+            immediate: true,
+            handler (search) {
+                this.$emit('update:modelValue', search);
+            }
         }
     }
 

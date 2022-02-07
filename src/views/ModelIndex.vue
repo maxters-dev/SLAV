@@ -22,8 +22,9 @@
 
     <model-search
       v-if="searchSchema.length > 0"
+      v-model="searchParams"
       :search-schema="searchSchema"
-      @submit="(params) => paginate({ page: 1, ...params })"
+      @submit="paginate({ page: 1, ...searchParams })"
     />
 
     <template v-if="loading.fetch">
@@ -70,7 +71,7 @@
           v-model="models.current_page"
           :length="models.last_page"
           circle
-          @input="(page) => paginate({ page })"
+          @input="(page) => paginate({ page, ...searchParams })"
         />
       </div>
     </template>
@@ -96,7 +97,7 @@ interface Refs {
 
 function useStringOrCallback (
     model: Model,
-    prop: ResourceRouteConfig['propertyTitleValue'] | ResourceRouteConfig['propertyImageName']
+    prop: ResourceRouteConfig['propertyTitleValue'] | ResourceRouteConfig['propertyImageValue']
 ): string | null {
     if (typeof prop === 'function') {
         return prop(model);
@@ -160,22 +161,32 @@ export default (Vue as VueConstructor<Vue & Refs>).extend({
     data () {
         return {
             models: { data: [] as Model[] } as Paginated,
-            loading: { fetch: false }
+            loading: { fetch: false },
+            searchParams: {}
         };
     },
 
     watch: {
         $route () {
             this.models = { data: [] as Model[] } as Paginated;
-            this.paginate();
+            this.fetch();
         }
     },
 
     created () {
-        this.paginate();
+        this.fetch();
     },
 
     methods: {
+
+        fetch () {
+            if (this.searchSchema.length === 0) {
+                this.paginate({ page: 1 });
+                return;
+            }
+
+            console.log(this.searchParams);
+        },
         preparedModel (model: Model) {
             return {
                 title: useStringOrCallback(model, this.propertyTitleValue),
