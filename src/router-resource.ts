@@ -27,7 +27,7 @@ function createRouteResource (
     const actionNames = generateNames(name);
     const propertyTitleValue = props.propertyTitleValue ?? 'name';
     const indexPageTitle = props.pluralTitle ?? titleCase(slug.replace(/-/g, ' '));
-    const pageCreateTitle = `Cadastrar${props.singularTitle ? props.singularTitle : ''}`;
+    const pageCreateTitle = `Cadastrar ${props.singularTitle ? props.singularTitle : ''}`;
     const pageShowTitle = props.singularTitle
         ? `Detalhes ${genderOfWord(props.singularTitle) === 'f' ? 'da' : 'do'} ${props.singularTitle}`
         : 'Detalhes';
