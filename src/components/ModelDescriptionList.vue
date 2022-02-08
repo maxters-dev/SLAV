@@ -25,10 +25,14 @@
                     <v-progress-linear
                         color="primary"
                         rounded
-                        :height="8"
+                        :height="25"
                         class="mt-2"
                         :value="field.value"
-                    />
+                    >
+                        <template #default="{ value }">
+                            <strong>{{ Math.ceil(value) }}%</strong>
+                        </template>
+                    </v-progress-linear>
                 </div>
                 <div v-else-if="field.type === 'rate'">
                     <v-rating
