@@ -62,6 +62,7 @@ export type ResourceRouteConfig = {
     detailsSchema?: FieldViewListSchema;
     handleAuthorizations?: (() => Promise<Authorizations>);
     customActions?: {[key: string]: AsyncComponent | Component}
+    prefixName?: string;
 };
 
 export type EditRouteProps = FormRouteProps;

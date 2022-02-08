@@ -12,11 +12,11 @@ import {
 import { titleCase } from './helpers';
 import { genderOfWord } from './helpers/schema/ptBr';
 
-const generateNames = (name: string): ResourceActionNames => ({
-    create: `${name}Create`,
-    edit: `${name}Edit`,
-    index: `${name}Index`,
-    show: `${name}Show`
+const generateNames = (name: string, prefix = ''): ResourceActionNames => ({
+    create: `${prefix}${name}Create`,
+    edit: `${prefix}${name}Edit`,
+    index: `${prefix}${name}Index`,
+    show: `${prefix}${name}Show`
 });
 
 function createRouteResource (
@@ -24,7 +24,7 @@ function createRouteResource (
 ): RouteConfigResourceDictionary {
     const slug = kebabCase(name);
     const resource = new Resource(slug);
-    const actionNames = generateNames(name);
+    const actionNames = generateNames(name, props.prefixName || '');
     const propertyTitleValue = props.propertyTitleValue ?? 'name';
     const indexPageTitle = props.pluralTitle ?? titleCase(slug.replace(/-/g, ' '));
     const pageCreateTitle = `Cadastrar ${props.singularTitle ? props.singularTitle : ''}`;

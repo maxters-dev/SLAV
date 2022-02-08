@@ -56,7 +56,8 @@ const formSchema: FormSchema = () => ([
 ]);
 
 export default createRouteResource({
-    name: 'customers',
+    name: 'Customers',
+    prefixName: 'prefix',
     propertyTitleValue: 'user.name',
     formSchema,
     searchSchema,
