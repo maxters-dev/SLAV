@@ -8,7 +8,7 @@ module.exports = {
         'plugin:@typescript-eslint/eslint-recommended',
         'plugin:@typescript-eslint/recommended',
         '@vue/typescript',
-        'plugin:vue/essential',
+        'plugin:vue/recommended',
         'standard'
     ],
 
@@ -29,7 +29,10 @@ module.exports = {
 
     rules: {
         indent: ['error', 4],
+        'vue/script-indent': ['error', 4, { baseIndent: 0 }],
+        'vue/html-indent': ['error', 4, { baseIndent: 1 }],
         semi: ['error', 'always'],
+        'vue/no-v-html': 'off',
         '@typescript-eslint/no-explicit-any': 'off'
     },
 
