@@ -4,18 +4,36 @@
             {{ pageTitle }}
         </h1>
         <v-divider class="my-5" />
-        <v-card :loading="loading.fetch" :disabled="loading.fetch">
-            <transition name="slide-y-transition" mode="out-in">
-                 <v-card-text v-if="loading.fetch" key="skeleton">
-                    <v-skeleton-loader class="mb-2" :key="x" v-for="x in 5" type="list-item" />
+        <v-card
+            :loading="loading.fetch"
+            :disabled="loading.fetch"
+        >
+            <transition
+                name="slide-y-transition"
+                mode="out-in"
+            >
+                <v-card-text
+                    v-if="loading.fetch"
+                    key="skeleton"
+                >
+                    <v-skeleton-loader
+                        v-for="x in 5"
+                        :key="x"
+                        class="mb-2"
+                        type="list-item"
+                    />
                 </v-card-text>
-                <v-card-text v-else key="fields">
+                <v-card-text
+                    v-else
+                    key="fields"
+                >
                     <model-form-field
+                        v-for="(item, key) in inputSchemas"
+                        :key="`model-form-field-${key}`"
                         :input-schema="item"
-                        @update:modelValue="(value) => setModelPropValue(item, value)"
                         :model-value="getModelPropValue(item)"
                         :model="model"
-                        v-for="(item, key) in inputSchemas" :key="`model-form-field-${key}`"
+                        @update:modelValue="(value) => setModelPropValue(item, value)"
                     />
                     <div class="d-flex justify-end">
                         <v-btn
@@ -28,7 +46,6 @@
                     </div>
                 </v-card-text>
             </transition>
-
         </v-card>
     </form>
 </template>
@@ -45,9 +62,9 @@ import { getModelPropValue, setModelPropValue } from '../helpers';
 import { Model } from '../types/laravel';
 
 export default Vue.extend({
+    name: 'ModelForm',
 
     components: { ModelFormField },
-    name: 'ModelForm',
 
     props: {
         formSchema: {

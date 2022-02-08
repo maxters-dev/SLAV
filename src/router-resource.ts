@@ -34,7 +34,7 @@ function createRouteResource (
 
     const resourceRoutes = {
         create: {
-            path: `/${slug}/create`,
+            path: `${slug}/create`,
             component: () => import('./views/ModelForm.vue'),
             name: actionNames.create,
             props: {
@@ -46,7 +46,7 @@ function createRouteResource (
             meta: { enabled: props.create !== false }
         },
         show: {
-            path: `/${slug}/:id`,
+            path: `${slug}/:id`,
             component: () => import('./views/ModelShow.vue'),
             name: actionNames.show,
             props: {
@@ -58,7 +58,7 @@ function createRouteResource (
             meta: { enabled: props.show !== false }
         },
         index: {
-            path: `/${slug}`,
+            path: `${slug}`,
             component: () => import('./views/ModelIndex.vue'),
             name: actionNames.index,
             props: {
@@ -68,7 +68,8 @@ function createRouteResource (
                 pageTitle: indexPageTitle,
                 propertyTitleValue,
                 searchSchema,
-                handleAuthorizations: props.handleAuthorizations
+                handleAuthorizations: props.handleAuthorizations,
+                customActions: props.customActions
             },
             meta: {
                 enabled: true,
@@ -76,7 +77,7 @@ function createRouteResource (
             }
         },
         edit: {
-            path: `/${slug}/:id/edit`,
+            path: `${slug}/:id/edit`,
             component: () => import('./views/ModelForm.vue'),
             name: actionNames.edit,
             props: {

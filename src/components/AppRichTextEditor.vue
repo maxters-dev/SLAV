@@ -3,7 +3,11 @@
         <label class="v-label text-caption">{{ label }}</label>
 
         <div class="mb-5 mt-2">
-            <v-layout v-if="editor" align-center wrap>
+            <v-layout
+                v-if="editor"
+                align-center
+                wrap
+            >
                 <template v-if="!isHtmlMode">
                     <v-flex
                         v-for="(button, key) in buttons"
@@ -29,7 +33,10 @@
                     </v-flex>
                 </template>
                 <v-spacer />
-                <v-flex grow shrink>
+                <v-flex
+                    grow
+                    shrink
+                >
                     <v-btn
                         :color="isHtmlMode ? 'primary' : 'default'"
                         @click="() => (isHtmlMode = !isHtmlMode)"
@@ -53,7 +60,10 @@
             </v-card>
         </section>
 
-        <v-dialog v-model="dialogImage" :max-width="400">
+        <v-dialog
+            v-model="dialogImage"
+            :max-width="400"
+        >
             <v-card>
                 <v-card-title>Seleção da imagem</v-card-title>
                 <v-card-text>
@@ -64,7 +74,9 @@
                     />
                 </v-card-text>
                 <v-card-actions class="d-flex justify-end">
-                    <v-btn color="primary"> Adicionar </v-btn>
+                    <v-btn color="primary">
+                        Adicionar
+                    </v-btn>
                 </v-card-actions>
             </v-card>
         </v-dialog>
@@ -81,6 +93,13 @@ import Image from '@tiptap/extension-image';
 
 import { CommandButton, generateButtons } from './AppRichTextEditor';
 import AppImageUpload from './AppImageUpload.vue';
+
+type Data = {
+    editor?: Editor;
+    isHtmlMode: boolean;
+    buttons: CommandButton[];
+    dialogImage: boolean;
+}
 
 export default Vue.extend({
     name: 'AppRichTextEditor',
@@ -101,23 +120,8 @@ export default Vue.extend({
         }
     },
 
-    data (): {
-        editor?: Editor;
-        isHtmlMode: boolean;
-        buttons: CommandButton[];
-        dialogImage: boolean;
-        } {
+    data (): Data {
         const buttons = generateButtons();
-
-        // buttons.push({
-        //   icon: 'mdi-image',
-        //   id: 'image',
-        //   handler: (focus: any) => {
-        //     console.log(focus)
-        //     // focus.setImage({ src: 'https://source.unsplash.com/8xznAGy4HcY/800x400' }).run
-        //     this.dialogImage = true
-        //   }
-        // })
 
         return {
             editor: undefined,

@@ -1,6 +1,12 @@
 <template>
-    <v-item-group class="pa-0" dense>
-        <v-item v-for="(field, key) in computedFields" :key="key">
+    <v-item-group
+        class="pa-0"
+        dense
+    >
+        <v-item
+            v-for="(field, key) in computedFields"
+            :key="key"
+        >
             <div class="py-1">
                 <div
                     class="text-subtitle-1 font-weight-semibold"
@@ -16,12 +22,29 @@
                     />
                 </div>
                 <div v-else-if="field.type === 'progress'">
-                    <v-progress-linear color="primary" rounded :height="8" class="mt-2" :value="field.value" />
-               </div>
+                    <v-progress-linear
+                        color="primary"
+                        rounded
+                        :height="8"
+                        class="mt-2"
+                        :value="field.value"
+                    />
+                </div>
                 <div v-else-if="field.type === 'rate'">
-                    <v-rating readonly dense color="primary" rounded :height="8" class="mt-2" :value="field.value" />
-               </div>
-                <div v-else-if="Array.isArray(field.value)" class="mt-2">
+                    <v-rating
+                        readonly
+                        dense
+                        color="primary"
+                        rounded
+                        :height="8"
+                        class="mt-2"
+                        :value="field.value"
+                    />
+                </div>
+                <div
+                    v-else-if="Array.isArray(field.value)"
+                    class="mt-2"
+                >
                     <v-chip
                         v-for="value in field.value"
                         :key="value"
@@ -31,8 +54,14 @@
                         {{ value }}
                     </v-chip>
                 </div>
-                <div v-else class="body-2 font-weight-light text-color-grey overflow-hidden">
-                    <span v-if="field.type === 'html'" v-html="field.value" />
+                <div
+                    v-else
+                    class="body-2 font-weight-light text-color-grey overflow-hidden"
+                >
+                    <span
+                        v-if="field.type === 'html'"
+                        v-html="field.value"
+                    />
                     <span v-else> {{ field.value }}</span>
                 </div>
             </div>

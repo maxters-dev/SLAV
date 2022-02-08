@@ -1,13 +1,13 @@
 <template>
-  <div>
-    <component
-      :is="inputSchemaProperties.component || 'VTextField'"
-      v-model="value"
-      v-bind="reactiveProps"
-      v-on="listeners"
-      ref="input"
-    />
-  </div>
+    <div>
+        <component
+            :is="inputSchemaProperties.component || 'VTextField'"
+            v-bind="reactiveProps"
+            ref="input"
+            v-model="value"
+            v-on="listeners"
+        />
+    </div>
 </template>
 
 <script lang="ts">
@@ -40,22 +40,16 @@ export default Vue.extend({
         AppDatePicker,
         VAutocomplete
     },
-    data () {
-        return {
-            reactiveProps: {} as any,
-            listeners: {} as any
-        };
-    },
 
-    created () {
-        this.enableAutocompleteSearch();
-        this.generateFieldDefinition();
-        this.enableSelectOptions();
+    model: {
+        prop: 'modelValue',
+        event: 'update:modelValue'
     },
 
     props: {
         inputSchema: {
-            type: [Object, Function] as PropType<InputSchema>
+            type: [Object, Function] as PropType<InputSchema>,
+            required: true
         },
         modelValue: {
             type: null as any,
@@ -66,10 +60,39 @@ export default Vue.extend({
             required: true
         }
     },
+    data () {
+        return {
+            reactiveProps: {} as any,
+            listeners: {} as any
+        };
+    },
 
-    model: {
-        prop: 'modelValue',
-        event: 'update:modelValue'
+    computed: {
+        value: {
+            set (value: any) {
+                this.$emit('update:modelValue', value);
+            },
+
+            get (): any {
+                return this.modelValue;
+            }
+        },
+        inputSchemaProperties (): InputSchemaProperties {
+            if (typeof this.inputSchema === 'function') {
+                return this.inputSchema({
+                    model: this.model,
+                    component: this
+                }) as InputSchemaProperties;
+            }
+
+            return this.inputSchema;
+        }
+    },
+
+    created () {
+        this.enableAutocompleteSearch();
+        this.generateFieldDefinition();
+        this.enableSelectOptions();
     },
 
     methods: {
@@ -160,28 +183,6 @@ export default Vue.extend({
             };
         }
 
-    },
-
-    computed: {
-        value: {
-            set (value: any) {
-                this.$emit('update:modelValue', value);
-            },
-
-            get (): any {
-                return this.modelValue;
-            }
-        },
-        inputSchemaProperties (): InputSchemaProperties {
-            if (typeof this.inputSchema === 'function') {
-                return this.inputSchema({
-                    model: this.model,
-                    component: this
-                }) as InputSchemaProperties;
-            }
-
-            return this.inputSchema;
-        }
     }
 });
 </script>

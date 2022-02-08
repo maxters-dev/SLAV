@@ -1,3 +1,4 @@
+import { AsyncComponent, Component } from 'vue';
 import { RawLocation, RouteConfig } from 'vue-router';
 import Resource from '../services/resource';
 import { Model } from './laravel';
@@ -60,6 +61,7 @@ export type ResourceRouteConfig = {
     fullDetailsSchema?: FieldViewListSchema;
     detailsSchema?: FieldViewListSchema;
     handleAuthorizations?: (() => Promise<Authorizations>);
+    customActions?: {[key: string]: AsyncComponent | Component}
 };
 
 export type EditRouteProps = FormRouteProps;

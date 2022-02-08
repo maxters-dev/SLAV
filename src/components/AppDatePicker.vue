@@ -18,7 +18,10 @@
                 v-on="on"
             />
         </template>
-        <v-date-picker v-bind="$attrs" @input="setDate" />
+        <v-date-picker
+            v-bind="$attrs"
+            @input="setDate"
+        />
     </v-menu>
 </template>
 

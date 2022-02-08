@@ -1,15 +1,30 @@
 <template>
-    <v-card class="mb-5" dense elevation="1">
+    <v-card
+        class="mb-5"
+        dense
+        elevation="1"
+    >
         <v-card-text>
             <form @submit.prevent="submit">
                 <v-row align="center">
-                    <template v-for="(input, key) in searchSchema" >
-                        <v-col :key="key" v-if="!input.hidden">
-                            <model-form-field :model="search" v-model.trim="search[input.name]" :inputSchema="input"></model-form-field>
+                    <template v-for="(input, key) in searchSchema">
+                        <v-col
+                            v-if="!input.hidden"
+                            :key="key"
+                        >
+                            <model-form-field
+                                v-model.trim="search[input.name]"
+                                :model="search"
+                                :input-schema="input"
+                            />
                         </v-col>
                     </template>
                     <v-col cols="auto">
-                        <v-btn icon type="submit" color="primary">
+                        <v-btn
+                            icon
+                            type="submit"
+                            color="primary"
+                        >
                             <v-icon>mdi-magnify</v-icon>
                         </v-btn>
                     </v-col>
@@ -32,8 +47,8 @@ const isEmpty = (value: string): boolean => {
 };
 
 export default Vue.extend({
-    components: { ModelFormField },
     name: 'ModelSearch',
+    components: { ModelFormField },
     model: {
         prop: 'modelValue',
         event: 'update:modelValue'
@@ -49,16 +64,6 @@ export default Vue.extend({
         }
     },
 
-    computed: {
-        filteredSearch (): {[key: string]: string} {
-            const filteredEntries = Object.entries(this.search).filter(([, value]) => !isEmpty(value));
-            return Object.fromEntries(filteredEntries);
-        }
-    },
-    created () {
-        this.submit();
-    },
-
     data () {
         const search = Object.fromEntries(this.searchSchema.map((search) => {
             return [search.name, search.defaultValue];
@@ -69,9 +74,10 @@ export default Vue.extend({
         };
     },
 
-    methods: {
-        submit (): void {
-            this.$emit('submit', this.filteredSearch);
+    computed: {
+        filteredSearch (): {[key: string]: string} {
+            const filteredEntries = Object.entries(this.search).filter(([, value]) => !isEmpty(value));
+            return Object.fromEntries(filteredEntries);
         }
     },
 
@@ -81,6 +87,15 @@ export default Vue.extend({
             handler (search) {
                 this.$emit('update:modelValue', search);
             }
+        }
+    },
+    created () {
+        this.submit();
+    },
+
+    methods: {
+        submit (): void {
+            this.$emit('submit', this.filteredSearch);
         }
     }
 

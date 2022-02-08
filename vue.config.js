@@ -3,10 +3,5 @@ module.exports = {
         'vuetify'
     ],
     productionSourceMap: false,
-    lintOnSave: true,
-    pages: {
-        index: {
-            entry: 'index.ts'
-        }
-    }
+    lintOnSave: true
 };

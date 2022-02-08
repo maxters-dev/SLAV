@@ -1,13 +1,27 @@
 <template>
     <div class="mb-5">
-        <div v-if="internalSrc" class="relative">
+        <div
+            v-if="internalSrc"
+            class="relative"
+        >
             <div class="d-flex justify-end">
-                <v-btn icon @click="cleanup">
+                <v-btn
+                    icon
+                    @click="cleanup"
+                >
                     <v-icon>mdi-delete</v-icon>
                 </v-btn>
             </div>
-            <v-img :src="internalSrc" :max-height="300" class="white--text">
-                <v-layout fill-height align-center justify-center>
+            <v-img
+                :src="internalSrc"
+                :max-height="300"
+                class="white--text"
+            >
+                <v-layout
+                    fill-height
+                    align-center
+                    justify-center
+                >
                     {{ label }}
                 </v-layout>
             </v-img>

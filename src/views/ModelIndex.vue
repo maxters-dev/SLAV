@@ -1,82 +1,102 @@
 <template>
-  <div :key="$route.path">
-    <app-dialog-confirm ref="confirm" />
-    <h1 class="display-1 text-uppercase">
-      {{ pageTitle }}
-    </h1>
+    <div :key="$route.path">
+        <app-dialog-confirm ref="confirm" />
 
-    <div class="d-flex justify-end mb-5">
-      <v-btn
-        v-if="routeIsEnabled(actionNames.create)"
-        small
-        color="primary"
-        fab
-        title="Adicionar novo registro"
-        :to="{ name: actionNames.create }"
-      >
-        <v-icon>mdi-plus</v-icon>
-      </v-btn>
-    </div>
+        <h1 class="display-1 text-uppercase">
+            {{ pageTitle }}
+        </h1>
 
-    <v-divider class="my-5" />
+        <div class="d-flex justify-end mb-5">
+            <v-btn
+                v-if="routeIsEnabled(actionNames.create)"
+                small
+                color="primary"
+                fab
+                title="Adicionar novo registro"
+                :to="{ name: actionNames.create }"
+            >
+                <v-icon>mdi-plus</v-icon>
+            </v-btn>
+        </div>
 
-    <model-search
-      v-if="searchSchema.length > 0"
-      v-model="searchParams"
-      :search-schema="searchSchema"
-      @submit="paginate({ page: 1, ...searchParams })"
-    />
+        <v-divider class="my-5" />
 
-    <template v-if="loading.fetch">
-      <v-row>
-        <v-col v-for="i in 8" :key="i" :lg="3" :md="6" :cols="12">
-          <v-skeleton-loader type="card" />
-        </v-col>
-      </v-row>
-    </template>
-    <template v-else-if="models">
-      <v-alert>
-        <v-layout justify-space-between align-center>
-          <div>Página {{ models.current_page }} de {{ models.last_page }}</div>
-          <div>
-            Total de
-            {{ models.total }}
-          </div>
-        </v-layout>
-      </v-alert>
-
-      <v-row>
-        <v-col
-          v-for="model in models.data"
-          :key="model.id"
-          :lg="3"
-          :md="6"
-          :cols="12"
-        >
-          <slot name="model" v-bind="{ model }">
-            <model-list-item
-              :edit-route="{ name: actionNames.edit, params: { id: model.id } }"
-              :show-route="{ name: actionNames.show, params: { id: model.id } }"
-              :actionsAuthorization="actionsAuthorization"
-              :action-names="actionNames"
-              :fields="fields"
-              :model="model"
-              v-bind="{ ...preparedModel(model) }"
-              @removed="() => remove(model)"
-            />
-          </slot>
-        </v-col>
-      </v-row>
-      <div v-if="models.last_page > 1" class="mt-5">
-        <v-pagination
-          v-model="models.current_page"
-          :length="models.last_page"
-          circle
-          @input="(page) => paginate({ page, ...searchParams })"
+        <model-search
+            v-if="searchSchema.length > 0"
+            v-model="searchParams"
+            :search-schema="searchSchema"
+            @submit="paginate({ page: 1, ...searchParams })"
         />
-      </div>
-    </template>
-  </div>
+
+        <transition
+            mode="out-in"
+            name="fade-transition"
+            :duration="50"
+        >
+            <div
+                v-if="loading.fetch"
+                key="loading"
+            >
+                <model-list-loading />
+            </div>
+            <section
+                v-else
+                :key="`page-${models.current_page}`"
+            >
+                <v-alert v-if="models.total > 0">
+                    <v-layout
+                        justify-space-between
+                        align-center
+                    >
+                        <div>Página {{ models.current_page }} de {{ models.last_page }}</div>
+                        <div>
+                            Total de
+                            {{ models.total }}
+                        </div>
+                    </v-layout>
+                </v-alert>
+                <v-alert v-else-if="models.total === 0">
+                    Nenhum resultado encontrado
+                </v-alert>
+
+                <v-row>
+                    <v-col
+                        v-for="model in models.data"
+                        :key="model.id"
+                        :lg="3"
+                        :md="6"
+                        :cols="12"
+                    >
+                        <slot
+                            name="model"
+                            v-bind="{ model }"
+                        >
+                            <model-list-item
+                                :edit-route="{ name: actionNames.edit, params: { id: model.id } }"
+                                :show-route="{ name: actionNames.show, params: { id: model.id } }"
+                                :actions-authorization="actionsAuthorization"
+                                :custom-actions="customActions"
+                                :action-names="actionNames"
+                                :fields="fields"
+                                :model="model"
+                                v-bind="{ ...preparedModel(model) }"
+                                @removed="() => remove(model)"
+                            />
+                        </slot>
+                    </v-col>
+                </v-row>
+                <v-pagination
+                    v-if="models.last_page > 1"
+                    v-model="models.current_page"
+                    :length="models.last_page"
+
+                    circle
+                    class="mt-5"
+                    @input="(page) => paginate({ page, ...searchParams })"
+                />
+            </section>
+        </transition>
+    </div>
 </template>
 
 <script lang="ts">
@@ -89,11 +109,12 @@ import { Model, Paginated } from '../types/laravel';
 import { Authorizations, IndexRouteProps, ResourceActionNames, ResourceRouteConfig } from '../types/router';
 import { SearchSchema } from '../types/schema';
 import { getModelPropValue } from '../helpers';
+import ModelListLoading from '../components/ModelListLoading.vue';
 
 interface Refs {
-  $refs: {
-    confirm: InstanceType<typeof AppDialogConfirm>;
-  };
+    $refs: {
+        confirm: InstanceType<typeof AppDialogConfirm>;
+    };
 }
 
 function useStringOrCallback (
@@ -114,7 +135,8 @@ export default (Vue as VueConstructor<Vue & Refs>).extend({
     components: {
         AppDialogConfirm,
         ModelListItem,
-        ModelSearch
+        ModelSearch,
+        ModelListLoading
     },
 
     props: {
@@ -161,6 +183,11 @@ export default (Vue as VueConstructor<Vue & Refs>).extend({
         handleAuthorizations: {
             type: Function as PropType<ResourceRouteConfig['handleAuthorizations']>,
             default: null
+        },
+
+        customActions: {
+            type: Object as PropType<ResourceRouteConfig['customActions']>,
+            default: () => ({})
         }
     },
 
@@ -185,7 +212,7 @@ export default (Vue as VueConstructor<Vue & Refs>).extend({
 
     methods: {
         async startup () {
-            this.models = { data: [] as Model[] } as Paginated;
+            this.models = { last_page: 0, data: [] as Model[] } as Paginated;
             this.actionsAuthorization = {};
 
             if (this.handleAuthorizations) {

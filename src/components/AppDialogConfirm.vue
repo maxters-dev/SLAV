@@ -1,13 +1,23 @@
 <template>
-    <v-dialog v-model="active" :max-width="400">
+    <v-dialog
+        v-model="active"
+        :max-width="400"
+    >
         <v-card>
             <v-card-title>Confirmação</v-card-title>
             <v-card-text>
                 {{ text }}
             </v-card-text>
             <v-card-actions class="d-flex justify-end">
-                <v-btn @click="choice(false)"> Não </v-btn>
-                <v-btn color="primary" @click="choice(true)"> Sim </v-btn>
+                <v-btn @click="choice(false)">
+                    Não
+                </v-btn>
+                <v-btn
+                    color="primary"
+                    @click="choice(true)"
+                >
+                    Sim
+                </v-btn>
             </v-card-actions>
         </v-card>
     </v-dialog>

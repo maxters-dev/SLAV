@@ -1,6 +1,8 @@
 <template>
-    <v-card height="100%" class="d-flex flex-column">
-
+    <v-card
+        height="100%"
+        class="d-flex flex-column"
+    >
         <v-img
             v-if="image"
             :src="image"
@@ -9,44 +11,82 @@
             class="flex-grow-0"
         />
         <v-card-title class="pb-0">
-            <div class="text-no-wrap text-truncate" :title="title">
+            <div
+                class="text-no-wrap text-truncate"
+                :title="title"
+            >
                 {{ title }}
             </div>
         </v-card-title>
 
         <div class="flex-grow-1 px-5">
-            <model-description-list :fields="fields" :model="model" />
+            <model-description-list
+                :fields="fields"
+                :model="model"
+            />
         </div>
 
         <v-card-actions class="d-flex justify-space-between">
             <span>
-                <v-chip v-if="date" small>
+                <v-chip
+                    v-if="date"
+                    small
+                >
                     {{ moment(date).format("DD/MM/YYYY") }}
                 </v-chip>
             </span>
             <div>
-                <v-btn
+                <template v-for="(actionComponent, name) in customActions">
+                    <slot :name="name">
+                        <component
+                            :is="actionComponent"
+                            :key="name"
+                            v-bind="{ model, hasPermission, name }"
+                        />
+                    </slot>
+                </template>
+                <slot
                     v-if="hasPermission('show', showRoute)"
-                    small
-                    icon
-                    title="Visualizar"
-                    :to="showRoute"
+                    name="showAction"
                 >
-                    <v-icon>mdi-alert-circle</v-icon>
-                </v-btn>
-                <v-btn v-if="hasPermission('edit', editRoute)" icon :to="editRoute">
-                    <v-icon>mdi-pencil</v-icon>
-                </v-btn>
-                <v-btn icon @click="remove" v-if="hasPermission('remove') && currentRouteMeta.enableRemove">
-                    <v-icon>mdi-delete</v-icon>
-                </v-btn>
+                    <v-btn
+                        small
+                        icon
+                        title="Visualizar"
+                        :to="showRoute"
+                    >
+                        <v-icon>mdi-alert-circle</v-icon>
+                    </v-btn>
+                </slot>
+                <slot
+                    v-if="hasPermission('edit', editRoute)"
+                    name="editAction"
+                >
+                    <v-btn
+                        icon
+                        :to="editRoute"
+                    >
+                        <v-icon>mdi-pencil</v-icon>
+                    </v-btn>
+                </slot>
+                <slot
+                    v-if="hasPermission('remove') && currentRouteMeta.enableRemove"
+                    name="removeAction"
+                >
+                    <v-btn
+                        icon
+                        @click="remove"
+                    >
+                        <v-icon>mdi-delete</v-icon>
+                    </v-btn>
+                </slot>
             </div>
         </v-card-actions>
     </v-card>
 </template>
 
 <script lang="ts">
-import Vue, { PropType } from 'vue';
+import Vue, { Component, PropType } from 'vue';
 import moment from 'moment';
 import ModelDescriptionList from './ModelDescriptionList.vue';
 import { RouteMeta } from 'vue-router';
@@ -92,7 +132,21 @@ export default Vue.extend({
 
         removeEnabled: Boolean,
 
-        actionsAuthorization: Object as PropType<Authorizations>
+        actionsAuthorization: {
+            type: Object as PropType<Authorizations>,
+            default: () => ({})
+        },
+
+        customActions: {
+            type: Object as PropType<{[key: string]: Component}>,
+            default: () => ({})
+        }
+    },
+
+    computed: {
+        currentRouteMeta (): RouteMeta {
+            return this.$route.meta ?? {};
+        }
     },
 
     methods: {
@@ -119,12 +173,6 @@ export default Vue.extend({
 
         remove () {
             this.$emit('removed');
-        }
-    },
-
-    computed: {
-        currentRouteMeta (): RouteMeta {
-            return this.$route.meta ?? {};
         }
     }
 });

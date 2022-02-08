@@ -62,6 +62,9 @@ export default createRouteResource({
     searchSchema,
     detailsSchema,
     fullDetailsSchema,
+    customActions: {
+        actionButton: () => import('../components/ActionButton.vue')
+    },
     async handleAuthorizations () {
         const user = await authSessionService.getUser(true);
         return {
