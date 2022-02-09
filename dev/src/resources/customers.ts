@@ -69,6 +69,7 @@ export default createRouteResource({
     async handleAuthorizations () {
         const user = await authSessionService.getUser(true);
         return {
+            create: () => true,
             edit: (model) => [2, 3].includes(user.role_id) && model.user_creator_id === user.id
         };
     }

@@ -8,7 +8,7 @@
 
         <div class="d-flex justify-end mb-5">
             <v-btn
-                v-if="routeIsEnabled(actionNames.create)"
+                v-if="routeIsEnabled('create', actionNames.create)"
                 small
                 color="primary"
                 fab
@@ -230,8 +230,12 @@ export default (Vue as VueConstructor<Vue & Refs>).extend({
             };
         },
 
-        routeIsEnabled (name: string) {
-            const route = this.$router.match({ name });
+        routeIsEnabled (actioName: string, routeName: string): boolean {
+            if (typeof this.actionsAuthorization[actioName] === 'function') {
+                return this.actionsAuthorization[actioName]();
+            }
+
+            const route = this.$router.match({ name: routeName });
 
             return route?.meta?.enabled === true;
         },

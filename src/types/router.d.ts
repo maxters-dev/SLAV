@@ -43,7 +43,9 @@ export type ShowRouteProps = {
     fields: FieldViewListSchema;
 } & BaseRouteProps;
 
-export type Authorizations = { [key: string]: (model: Model) => boolean };
+export type Authorizations = {
+    [key: string]: (model?: Model) => boolean
+};
 
 export type ResourceRouteConfig = {
     name: string;
