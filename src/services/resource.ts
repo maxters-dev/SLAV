@@ -40,9 +40,17 @@ export default class Resource {
         return data as Model;
     }
 
-    async all (): Promise<Paginated['data']> {
-        const result = await this.paginated({});
+    async all (params: Record<string, string> = {}): Promise<Paginated['data']> {
+        const result = [];
+        let page = 1;
 
-        return result.data;
+        let paginated;
+        do {
+            paginated = await this.paginated({ page, ...params });
+            page++;
+            result.push(...paginated.data);
+        } while (paginated.data.length > 0);
+
+        return result;
     }
 }
