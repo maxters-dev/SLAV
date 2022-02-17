@@ -12,19 +12,19 @@ import {
 import { titleCase } from './helpers';
 import { genderOfWord } from './helpers/schema/ptBr';
 
-const generateNames = (name: string, prefix = ''): ResourceActionNames => ({
-    create: `${prefix}${name}Create`,
-    edit: `${prefix}${name}Edit`,
-    index: `${prefix}${name}Index`,
-    show: `${prefix}${name}Show`
-});
+function generateNames (name: string, prefix = ''): ResourceActionNames {
+    return {
+        create: `${prefix}${name}Create`,
+        edit: `${prefix}${name}Edit`,
+        index: `${prefix}${name}Index`,
+        show: `${prefix}${name}Show`
+    };
+}
 
-function createRouteResource (
-    { formSchema = [], name, searchSchema, ...props }: ResourceRouteConfig
-): RouteConfigResourceDictionary {
+function createRouteResource ({ formSchema = [], name, searchSchema, ...props }: ResourceRouteConfig): RouteConfigResourceDictionary {
     const slug = kebabCase(name);
     const resource = new Resource(slug);
-    const actionNames = generateNames(name, props.prefixName || '');
+    const actionNames = generateNames(name, props.prefixName ?? '');
     const propertyTitleValue = props.propertyTitleValue ?? 'name';
     const indexPageTitle = props.pluralTitle ?? titleCase(slug.replace(/-/g, ' '));
     const pageCreateTitle = `Cadastrar ${props.singularTitle ? props.singularTitle : ''}`;
@@ -35,7 +35,7 @@ function createRouteResource (
     const resourceRoutes = {
         create: {
             path: `${slug}/create`,
-            component: () => import('./views/ModelForm.vue'),
+            component: props.formComponent ?? (() => import('./views/ModelForm.vue')),
             name: actionNames.create,
             props: {
                 indexRoute: actionNames.index,
@@ -47,7 +47,7 @@ function createRouteResource (
         },
         show: {
             path: `${slug}/:id`,
-            component: () => import('./views/ModelShow.vue'),
+            component: props.showComponent ?? (() => import('./views/ModelShow.vue')),
             name: actionNames.show,
             props: {
                 propertyTitleValue,
@@ -59,7 +59,7 @@ function createRouteResource (
         },
         index: {
             path: `${slug}`,
-            component: () => import('./views/ModelIndex.vue'),
+            component: props.indexComponent ?? (() => import('./views/ModelIndex.vue')),
             name: actionNames.index,
             props: {
                 actionNames,
@@ -68,6 +68,7 @@ function createRouteResource (
                 pageTitle: indexPageTitle,
                 propertyTitleValue,
                 searchSchema,
+                propertyImageValue: props.propertyImageValue,
                 handleAuthorizations: props.handleAuthorizations,
                 customActions: props.customActions
             },
@@ -78,12 +79,12 @@ function createRouteResource (
         },
         edit: {
             path: `${slug}/:id/edit`,
-            component: () => import('./views/ModelForm.vue'),
+            component: props.formComponent ?? (() => import('./views/ModelForm.vue')),
             name: actionNames.edit,
             props: {
                 formSchema,
                 indexRoute: actionNames.index,
-                pageTitle: `Editando ${props.singularTitle || name}`,
+                pageTitle: `Editando ${props.singularTitle ?? name}`,
                 resource
             },
             meta: { enabled: props.edit !== false }
@@ -100,7 +101,7 @@ function createRouteResource (
         Object.assign(route.props, resultProps);
     }
 
-    store.sidebarItems.push({
+    resourceRoutes.index.meta.enabled && store.sidebarItems.push({
         title: resourceRoutes.index.props.pageTitle,
         to: {
             name: actionNames.index

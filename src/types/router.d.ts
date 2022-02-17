@@ -1,5 +1,5 @@
-import { AsyncComponent, Component } from 'vue';
-import { RawLocation, RouteConfig } from 'vue-router';
+import { RouteConfig, Location } from 'vue-router';
+import { Component } from 'vue-router/types/router';
 import Resource from '../services/resource';
 import { Model } from './laravel';
 import { FieldViewListSchema, FormSchema, InputSchema, SearchSchema } from './schema';
@@ -36,7 +36,7 @@ export type IndexRouteProps = {
 
 export type SidebarItemConfig = {
     title: string;
-    to: RawLocation;
+    to: Location;
 };
 
 export type ShowRouteProps = {
@@ -63,8 +63,12 @@ export type ResourceRouteConfig = {
     fullDetailsSchema?: FieldViewListSchema;
     detailsSchema?: FieldViewListSchema;
     handleAuthorizations?: (() => Promise<Authorizations>);
-    customActions?: {[key: string]: AsyncComponent | Component}
+    customActions?: { [key: string]: Component}
     prefixName?: string;
+    indexComponent?: Component;
+    showComponent?: Component;
+    formComponent?: Component;
+    children?: Array;
 };
 
 export type EditRouteProps = FormRouteProps;

@@ -41,9 +41,7 @@ import { SearchSchema } from '../types/schema';
 import ModelFormField from './ModelFormField.vue';
 
 const isEmpty = (value: string): boolean => {
-    if (typeof value === 'string' && value === '') return true;
-
-    return value === null || value === undefined;
+    return value === null || value === undefined || value === '';
 };
 
 export default Vue.extend({
@@ -81,23 +79,10 @@ export default Vue.extend({
         }
     },
 
-    watch: {
-        filteredSearch: {
-            immediate: true,
-            handler (search) {
-                this.$emit('update:modelValue', search);
-            }
-        }
-    },
-    created () {
-        this.submit();
-    },
-
     methods: {
         submit (): void {
             this.$emit('submit', this.filteredSearch);
         }
     }
-
 });
 </script>

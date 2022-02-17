@@ -56,9 +56,11 @@ const formSchema: FormSchema = () => ([
 ]);
 
 export default createRouteResource({
+    indexComponent: () => import('../../../src/views/CompactModelIndex.vue'),
     name: 'Customers',
     prefixName: 'prefix',
     propertyTitleValue: 'user.name',
+    propertyImageValue: 'user.avatar_url',
     formSchema,
     searchSchema,
     detailsSchema,

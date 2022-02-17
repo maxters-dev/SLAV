@@ -25,7 +25,7 @@
             v-if="searchSchema.length > 0"
             v-model="searchParams"
             :search-schema="searchSchema"
-            @submit="paginate({ page: 1, ...searchParams })"
+            @submit="() => paginate(1)"
         />
 
         <transition
@@ -92,7 +92,7 @@
 
                     circle
                     class="mt-5"
-                    @input="(page) => paginate({ page, ...searchParams })"
+                    @input="(page) => paginate(page)"
                 />
             </section>
         </transition>
@@ -126,6 +126,8 @@ function useStringOrCallback (
     } else if (typeof prop !== 'string') return null;
 
     const result = getModelPropValue(model, prop);
+
+    console.log(result);
 
     return typeof result === 'string' ? result : null;
 }
@@ -166,7 +168,7 @@ export default (Vue as VueConstructor<Vue & Refs>).extend({
         },
 
         propertyImageValue: {
-            type: Object as PropType<ResourceRouteConfig['propertyImageValue']>,
+            type: String as PropType<ResourceRouteConfig['propertyImageValue']>,
             default: null
         },
 
@@ -176,7 +178,7 @@ export default (Vue as VueConstructor<Vue & Refs>).extend({
         },
 
         searchSchema: {
-            type: Array as PropType<SearchSchema[]>,
+            type: Array as PropType<SearchSchema>,
             default: () => []
         },
 
@@ -219,9 +221,11 @@ export default (Vue as VueConstructor<Vue & Refs>).extend({
                 this.actionsAuthorization = await this.handleAuthorizations();
             }
 
-            if (this.searchSchema.length === 0) {
-                this.paginate({ page: 1 });
-            }
+            this.searchParams = Object.fromEntries(this.searchSchema.map((search) => {
+                return [search.name, search.defaultValue];
+            }));
+
+            this.paginate(1);
         },
         preparedModel (model: Model) {
             return {
@@ -240,10 +244,10 @@ export default (Vue as VueConstructor<Vue & Refs>).extend({
             return route?.meta?.enabled === true;
         },
 
-        async paginate (params: any = {}) {
+        async paginate (page: number) {
             this.loading.fetch = true;
             try {
-                this.models = await this.resource.paginated(params);
+                this.models = await this.resource.paginated({ page, ...this.searchParams });
             } finally {
                 this.loading.fetch = false;
             }

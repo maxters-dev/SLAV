@@ -1,6 +1,8 @@
 import { createRouteResource } from '../../../src/router-resource';
+import Resource from '../../../src/services/resource';
 
 export default createRouteResource({
+
     name: 'customerObjectiveItems',
     propertyTitleValue: 'month_year',
     singularTitle: 'Meta Mensal do Objetivo',
@@ -29,7 +31,9 @@ export default createRouteResource({
             ]
         },
         { name: 'contains[user.email]', label: 'E-mail', type: 'email' },
-        { name: 'exact[gender]', label: 'Gênero', items: [{ name: 'Masculino', id: 1 }, { name: 'Feminino', id: 2 }], component: 'VSelect' }
+        { name: 'exact[gender]', label: 'Gênero', items: [{ name: 'Masculino', id: 1 }, { name: 'Feminino', id: 2 }], component: 'VSelect' },
+
+        { name: 'exact[role_id]', label: 'Nível', component: 'VSelect', items: async () => new Resource('users').all() }
     ],
     index: props => ({ ...props, pageTitle: 'Metas Mensais' })
 });
