@@ -15,7 +15,9 @@ import Vue, { PropType } from 'vue';
 import { Model } from '../types/laravel';
 import { InputSchema, InputSchemaProperties } from '../types/schema';
 
+import AppImageUpload from '../components/AppImageUpload.vue';
 import AppDatePicker from '../components/AppDatePicker.vue';
+import AppRichTextEditor from '../components/AppRichTextEditor.vue';
 import {
     VAutocomplete,
     VCheckbox,
@@ -31,13 +33,15 @@ export default Vue.extend({
     name: 'ModelFormField',
 
     components: {
+        AppImageUpload,
+        AppDatePicker,
+        AppRichTextEditor,
         VTextField,
         VTextarea,
         VSelect,
         VChip,
         VCheckbox,
         VSwitch,
-        AppDatePicker,
         VAutocomplete
     },
 
@@ -96,6 +100,7 @@ export default Vue.extend({
     },
 
     methods: {
+
         createFieldDefinition () {
             const inputSchemaProps = this.inputSchemaProperties;
 

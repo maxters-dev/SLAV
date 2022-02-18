@@ -1,4 +1,4 @@
-import { createRouteResource } from '../../../src/router-resource';
+import { RouteResource } from '../../../';
 import { addTimestampsFields } from '../../../src/helpers/schema/ptBr';
 import { FieldViewListSchema, FormSchema } from '../../../src/types/schema';
 import authSessionService from '../../../src/services/auth';
@@ -55,10 +55,10 @@ const formSchema: FormSchema = () => ([
     { name: 'address', label: 'Endereço', appendIcon: 'mdi-map' }
 ]);
 
-export default createRouteResource({
-    indexComponent: () => import('../../../src/views/CompactModelIndex.vue'),
+export default new RouteResource({
     name: 'Customers',
     prefixName: 'prefix',
+    pluralTitle: 'Clientes',
     propertyTitleValue: 'user.name',
     propertyImageValue: 'user.avatar_url',
     formSchema,

@@ -19,7 +19,7 @@ export interface AuthService {
     removeToken(): void;
 }
 
-const authSessionService: AuthService = {
+export const authSessionService: AuthService = {
     getToken (): string | null {
         return sessionStorage.getItem(TOKEN_KEY);
     },

@@ -53,4 +53,9 @@ export default class Resource {
 
         return result;
     }
+
+    async paginatedChildren (id: number, path: string) {
+        const { data } = await api.get(`${this.prefix}/${id}/${path}`);
+        return data;
+    }
 }

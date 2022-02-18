@@ -1,15 +1,9 @@
 import Resource from './src/services/resource';
-import auth from './src/services/auth';
-import {
-    createRouteResource,
-    generateRoutesFromResources,
-    generateFromRouteDictionaries
-} from './src/router-resource';
+import { EventBus } from './src/services/event-bus';
+export * from './src/route-resource';
+export * from './src/services/auth';
 
 export {
-    createRouteResource,
-    generateRoutesFromResources,
-    generateFromRouteDictionaries,
-    Resource,
-    auth
+    EventBus,
+    Resource
 };

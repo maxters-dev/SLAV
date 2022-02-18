@@ -1,7 +1,7 @@
-import { createRouteResource } from '../../../src/router-resource';
+import { RouteResource } from '../../../index';
 import Resource from '../../../src/services/resource';
 
-export default createRouteResource({
+export default new RouteResource({
 
     name: 'customerObjectiveItems',
     propertyTitleValue: 'month_year',

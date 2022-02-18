@@ -25,7 +25,7 @@
             v-if="searchSchema.length > 0"
             v-model="searchParams"
             :search-schema="searchSchema"
-            @submit="() => paginate(1)"
+            @submit="search"
         />
 
         <transition
@@ -79,7 +79,7 @@
                                 :action-names="actionNames"
                                 :fields="fields"
                                 :model="model"
-                                v-bind="{ ...preparedModel(model) }"
+                                v-bind="{ ...useImageAndTitle(model) }"
                                 @removed="() => remove(model)"
                             />
                         </slot>
@@ -89,7 +89,6 @@
                     v-if="models.last_page > 1"
                     v-model="models.current_page"
                     :length="models.last_page"
-
                     circle
                     class="mt-5"
                     @input="(page) => paginate(page)"
@@ -100,172 +99,18 @@
 </template>
 
 <script lang="ts">
-import Resource from '../services/resource';
-import ModelSearch from '../components/ModelSearch.vue';
-import ModelListItem from '../components/ModelListItem.vue';
-import AppDialogConfirm from '../components/AppDialogConfirm.vue';
-import Vue, { PropType, VueConstructor } from 'vue';
-import { Model, Paginated } from '../types/laravel';
-import { Authorizations, IndexRouteProps, ResourceActionNames, ResourceRouteConfig } from '../types/router';
-import { SearchSchema } from '../types/schema';
-import { getModelPropValue } from '../helpers';
-import ModelListLoading from '../components/ModelListLoading.vue';
+import modelIndex from '../../src/mixins/modelIndex';
+import AppDialogConfirm from '../../src/components/AppDialogConfirm.vue';
+import ModelSearch from '../../src/components/ModelSearch.vue';
+import ModelListItem from '../../src/components/ModelListItem.vue';
+import ModelListLoading from '../../src/components/ModelListLoading.vue';
 
-interface Refs {
-    $refs: {
-        confirm: InstanceType<typeof AppDialogConfirm>;
-    };
-}
-
-function useStringOrCallback (
-    model: Model,
-    prop: ResourceRouteConfig['propertyTitleValue'] | ResourceRouteConfig['propertyImageValue']
-): string | null {
-    if (typeof prop === 'function') {
-        return prop(model);
-    } else if (typeof prop !== 'string') return null;
-
-    const result = getModelPropValue(model, prop);
-
-    console.log(result);
-
-    return typeof result === 'string' ? result : null;
-}
-
-export default (Vue as VueConstructor<Vue & Refs>).extend({
-    name: 'ModelList',
+export default modelIndex.extend({
     components: {
-        AppDialogConfirm,
-        ModelListItem,
         ModelSearch,
-        ModelListLoading
-    },
-
-    props: {
-        resource: {
-            type: Resource,
-            required: true
-        },
-
-        pageTitle: {
-            type: String,
-            required: true
-        },
-
-        removeEnabled: {
-            type: Boolean,
-            default: true
-        },
-
-        actionNames: {
-            type: Object as PropType<ResourceActionNames>,
-            required: true
-        },
-
-        propertyTitleValue: {
-            type: [String, Function] as PropType<ResourceRouteConfig['propertyTitleValue']>,
-            default: 'name'
-        },
-
-        propertyImageValue: {
-            type: String as PropType<ResourceRouteConfig['propertyImageValue']>,
-            default: null
-        },
-
-        fields: {
-            type: Array as PropType<IndexRouteProps['fields']>,
-            required: true
-        },
-
-        searchSchema: {
-            type: Array as PropType<SearchSchema>,
-            default: () => []
-        },
-
-        handleAuthorizations: {
-            type: Function as PropType<ResourceRouteConfig['handleAuthorizations']>,
-            default: null
-        },
-
-        customActions: {
-            type: Object as PropType<ResourceRouteConfig['customActions']>,
-            default: () => ({})
-        }
-    },
-
-    data () {
-        return {
-            models: { data: [] as Model[] } as Paginated,
-            loading: { fetch: false },
-            searchParams: {},
-
-            actionsAuthorization: {} as Authorizations
-        };
-    },
-
-    watch: {
-        '$route.path': {
-            immediate: true,
-            handler () {
-                this.startup();
-            }
-        }
-    },
-
-    methods: {
-        async startup () {
-            this.models = { last_page: 0, data: [] as Model[] } as Paginated;
-            this.actionsAuthorization = {};
-
-            if (this.handleAuthorizations) {
-                this.actionsAuthorization = await this.handleAuthorizations();
-            }
-
-            this.searchParams = Object.fromEntries(this.searchSchema.map((search) => {
-                return [search.name, search.defaultValue];
-            }));
-
-            this.paginate(1);
-        },
-        preparedModel (model: Model) {
-            return {
-                title: useStringOrCallback(model, this.propertyTitleValue),
-                image: useStringOrCallback(model, this.propertyImageValue)
-            };
-        },
-
-        routeIsEnabled (actioName: string, routeName: string): boolean {
-            if (typeof this.actionsAuthorization[actioName] === 'function') {
-                return this.actionsAuthorization[actioName]();
-            }
-
-            const route = this.$router.match({ name: routeName });
-
-            return route?.meta?.enabled === true;
-        },
-
-        async paginate (page: number) {
-            this.loading.fetch = true;
-            try {
-                this.models = await this.resource.paginated({ page, ...this.searchParams });
-            } finally {
-                this.loading.fetch = false;
-            }
-        },
-
-        async remove (model: Model) {
-            const ok: boolean = await this.$refs.confirm.open({
-                text: 'Deseja remover esse model?'
-            });
-
-            if (!ok) return;
-
-            await this.resource.delete(model.id);
-
-            const index = this.models.data.indexOf(model);
-
-            this.models.data.splice(index, 1);
-        }
+        ModelListLoading,
+        ModelListItem,
+        AppDialogConfirm
     }
 });
 </script>
