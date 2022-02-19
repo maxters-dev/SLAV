@@ -105,10 +105,10 @@ class RouteResource {
         const name = this.props.name;
 
         return {
-            show: `${prefix}${name}Show`,
             create: `${prefix}${name}Create`,
-            edit: `${prefix}${name}Edit`,
-            index: `${prefix}${name}Index`
+            index: `${prefix}${name}Index`,
+            show: `${prefix}${name}Show`,
+            edit: `${prefix}${name}Edit`
         };
     }
 
@@ -139,7 +139,7 @@ class RouteResource {
             props: {
                 indexRoute: this.actionNames.index,
                 formSchema: this.formSchema,
-                pageTitle: this.pageIndexTitle,
+                pageTitle: this.pageCreateTitle,
                 resource: this.resource
             },
             meta: { enabled: this.props.create !== false }
@@ -200,8 +200,8 @@ class RouteResource {
     public toDictionary (): RouteConfigResourceDictionary {
         const dictionary = {
             index: this.getIndexRoute(),
-            show: this.getShowRoute(),
             create: this.getCreateRoute(),
+            show: this.getShowRoute(),
             edit: this.getEditRoute()
         };
 
