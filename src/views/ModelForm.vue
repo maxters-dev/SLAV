@@ -154,7 +154,13 @@ export default Vue.extend({
 
             EventBus.$emit('message', 'Dados salvos com sucesso!');
 
-            this.$router.push({ name: this.indexRoute });
+            this.back();
+        },
+
+        back () {
+            this.$router.push({
+                name: this.indexRoute
+            });
         },
 
         mergeModel (model: object) {

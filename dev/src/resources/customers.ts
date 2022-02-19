@@ -2,14 +2,16 @@ import { RouteResource } from '../../../';
 import { addTimestampsFields } from '../../../src/helpers/schema/ptBr';
 import { FieldViewListSchema, FormSchema } from '../../../src/types/schema';
 import authSessionService from '../../../src/services/auth';
+import customerObjectives from './customer-objectives';
 
 const genders = [{ text: 'Masculino', value: 'M' }, { text: 'Feminino', value: 'F' }];
 
 const detailsSchema: FieldViewListSchema = [
     { title: 'Celular', name: 'phone' },
     { title: 'E-mail', name: 'user.email' },
-    { title: 'Progresso', name: 'fake_progress_field', type: 'progress', format: () => Math.random() * 100 },
-    { title: 'Avaliações', name: 'fake_rate_field', type: 'rate', format: () => Math.random() * 5 }
+    { title: 'Objetivos', name: 'objectives_count' }
+    // { title: 'Progresso', name: 'fake_progress_field', type: 'progress', format: () => Math.random() * 100 }
+    // { title: 'Avaliações', name: 'fake_rate_field', type: 'rate', format: () => Math.random() * 5 }
 ];
 
 const fullDetailsSchema = addTimestampsFields([
@@ -55,7 +57,7 @@ const formSchema: FormSchema = () => ([
     { name: 'address', label: 'Endereço', appendIcon: 'mdi-map' }
 ]);
 
-export default new RouteResource({
+const routeResource = new RouteResource({
     name: 'Customers',
     prefixName: 'prefix',
     pluralTitle: 'Clientes',
@@ -65,9 +67,7 @@ export default new RouteResource({
     searchSchema,
     detailsSchema,
     fullDetailsSchema,
-    customActions: {
-        actionButton: () => import('../components/ActionButton.vue')
-    },
+
     async handleAuthorizations () {
         const user = await authSessionService.getUser(true);
         return {
@@ -76,3 +76,20 @@ export default new RouteResource({
         };
     }
 });
+
+routeResource
+    .addNested('mdi-trophy-outline', customerObjectives)
+    .addNested('mdi-arrow-right', {
+        name: 'CustomerObjectiveItems',
+        pluralTitle: 'Metas do Objetivo',
+        propertyTitleValue: 'month_year',
+        fullDetailsSchema: [
+            { name: 'month', title: 'Mes' }
+        ],
+
+        create: false,
+        edit: false,
+        remove: false
+    });
+
+export default routeResource;

@@ -47,7 +47,7 @@ export type Authorizations = {
     [key: string]: (model?: Model) => boolean
 };
 
-export type ResourceRouteConfig = {
+export interface ResourceRouteConfig {
     name: string;
     formSchema?: FormSchema;
     searchSchema?: SearchSchema;
@@ -68,8 +68,7 @@ export type ResourceRouteConfig = {
     indexComponent?: Component;
     showComponent?: Component;
     formComponent?: Component;
-    children?: Array;
-};
+}
 
 export type EditRouteProps = FormRouteProps;
 export type CreateRouteProps = EditRouteProps;

@@ -54,8 +54,11 @@ export default class Resource {
         return result;
     }
 
-    async paginatedChildren (id: number, path: string) {
-        const { data } = await api.get(`${this.prefix}/${id}/${path}`);
-        return data;
+    async paginatedNested (parentId: number, parentPath: string, params: {[key: string]: unknown} = {}) {
+        const path = `${parentPath}/${parentId}/${this.prefix}`;
+
+        const { data } = await api.get(path, { params });
+
+        return data as Paginated;
     }
 }

@@ -4,13 +4,11 @@ import { RouterRegistrar } from '../index';
 import customers from './src/resources/customers';
 import Layout from './src/Layout.vue';
 import Login from './src/Login.vue';
-import customerObjectiveItems from './src/resources/customer-objective-items';
 
 Vue.use(VueRouter);
 
 const adminRoutes = RouterRegistrar.toRoutes([
-    customers,
-    customerObjectiveItems
+    customers
 ]);
 const router = new VueRouter({
     mode: 'history',

@@ -72,15 +72,15 @@
                             v-bind="{ model }"
                         >
                             <model-list-item
-                                :edit-route="{ name: actionNames.edit, params: { id: model.id } }"
-                                :show-route="{ name: actionNames.show, params: { id: model.id } }"
+                                :edit-route="{ name: actionNames.edit, params: { id: model.id, parentId } }"
+                                :show-route="{ name: actionNames.show, params: { id: model.id, parentId} }"
                                 :actions-authorization="actionsAuthorization"
                                 :custom-actions="customActions"
                                 :action-names="actionNames"
                                 :fields="fields"
                                 :model="model"
                                 v-bind="{ ...useImageAndTitle(model) }"
-                                @removed="() => remove(model)"
+                                @removed="() => removeConfirmation(model)"
                             />
                         </slot>
                     </v-col>
@@ -104,6 +104,7 @@ import AppDialogConfirm from '../../src/components/AppDialogConfirm.vue';
 import ModelSearch from '../../src/components/ModelSearch.vue';
 import ModelListItem from '../../src/components/ModelListItem.vue';
 import ModelListLoading from '../../src/components/ModelListLoading.vue';
+import { Model } from '../../src/types';
 
 export default modelIndex.extend({
     components: {
@@ -111,6 +112,15 @@ export default modelIndex.extend({
         ModelListLoading,
         ModelListItem,
         AppDialogConfirm
+    },
+
+    methods: {
+        removeConfirmation (model: Model) {
+            (this.$refs.confirm as any).open({
+                text: ''
+            });
+            this.remove(model);
+        }
     }
 });
 </script>

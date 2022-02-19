@@ -4,6 +4,7 @@ import { Model, Paginated } from '../types/laravel';
 import { Authorizations, IndexRouteProps, ResourceActionNames, ResourceRouteConfig } from '../types/router';
 import { SearchSchema } from '../types/schema';
 import { getModelPropValue } from '../helpers';
+import { NestedRouteResource, RouteResource } from '../route-resource';
 
 function useStringOrCallback (
     model: Model,
@@ -67,7 +68,11 @@ export const props = {
     customActions: {
         type: Object as PropType<ResourceRouteConfig['customActions']>,
         default: () => ({})
-    }
+    },
+
+    isNested: Boolean,
+
+    routeResource: RouteResource
 };
 
 export default Vue.extend({
@@ -80,6 +85,13 @@ export default Vue.extend({
             searchParams: {},
             actionsAuthorization: {} as Authorizations
         };
+    },
+
+    computed: {
+        parentId (): number | null {
+            const id = this.$route.params.parentId;
+            return id ? parseInt(id, 10) : null;
+        }
     },
 
     watch: {
@@ -128,10 +140,19 @@ export default Vue.extend({
             await this.paginate(1);
         },
 
+        async _paginateNested (page: number) {
+            const parentPath = (this.routeResource as NestedRouteResource).prefixPath;
+            return this.resource.paginatedNested(this.parentId as number, parentPath, { page, ...this.searchParams });
+        },
+
         async paginate (page: number) {
             this.loading.fetch = true;
             try {
-                this.models = await this.resource.paginated({ page, ...this.searchParams });
+                if (this.routeResource instanceof NestedRouteResource) {
+                    this.models = await this._paginateNested(page);
+                } else {
+                    this.models = await this.resource.paginated({ page, ...this.searchParams });
+                }
             } finally {
                 this.loading.fetch = false;
             }

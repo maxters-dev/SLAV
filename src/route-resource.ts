@@ -1,7 +1,8 @@
-import { kebabCase } from '@lukaspolak/kebab-case';
-import Resource from './services/resource';
-import { RouteConfig } from 'vue-router';
+import ActionButton from './components/ActionButton.vue';
 import store from './store';
+import Resource from './services/resource';
+import { kebabCase } from '@lukaspolak/kebab-case';
+import { RouteConfig } from 'vue-router';
 import { titleCase } from './helpers';
 import { genderOfWord } from './helpers/schema/ptBr';
 import { FormSchema } from './types';
@@ -13,10 +14,12 @@ import {
 } from './types/router';
 
 class RouteResource {
-    props: ResourceRouteConfig;
-    resource: Resource;
-    actionNames: { [key: string]: string };
-    slug: string;
+    // eslint-disable-next-line no-use-before-define
+    public readonly nesteds: NestedRouteResource[] = [];
+    public readonly props: ResourceRouteConfig;
+    public readonly resource: Resource;
+    public readonly actionNames: { [key: string]: string };
+    public readonly slug: string;
 
     constructor (props: ResourceRouteConfig) {
         this.props = props;
@@ -30,29 +33,17 @@ class RouteResource {
     }
 
     get pageCreateTitle (): string {
-        return `Cadastrar ${this.props.singularTitle ? this.props.singularTitle : ''}`;
+        return `Cadastrar ${this.props.singularTitle ?? ''}`;
     }
 
     get pageEditTitle (): string {
-        return `Editando ${this.props.singularTitle ?? this.props.singularTitle}`;
+        return `Editando ${this.props.singularTitle ?? ''}`;
     }
 
     get pageShowTitle (): string {
         return this.props.singularTitle
             ? `Detalhes ${genderOfWord(this.props.singularTitle) === 'f' ? 'da' : 'do'} ${this.props.singularTitle}`
             : 'Detalhes';
-    }
-
-    protected generateRouteNames () {
-        const prefix = this.props.prefixName;
-        const name = this.props.name;
-
-        return {
-            create: `${prefix}${name}Create`,
-            edit: `${prefix}${name}Edit`,
-            index: `${prefix}${name}Index`,
-            show: `${prefix}${name}Show`
-        };
     }
 
     get formSchema (): FormSchema {
@@ -89,9 +80,45 @@ class RouteResource {
             : 'Detalhes';
     }
 
-    getShowRoute (): RouteConfig {
+    public get indexPath () {
+        return this.buildRoutePath('');
+    }
+
+    get customActions () {
+        const actions = Object.fromEntries(this.nesteds.map(nested => {
+            return [
+                nested.props.name,
+                ActionButton.extend({
+                    props: {
+                        icon: { default: nested.icon },
+                        routeName: { default: nested.actionNames.index }
+                    }
+                })
+            ];
+        }));
+
+        return Object.assign(actions, this.props.customActions);
+    }
+
+    protected generateRouteNames () {
+        const prefix = this.props.prefixName ?? '';
+        const name = this.props.name;
+
         return {
-            path: `${this.slug}/:id`,
+            create: `${prefix}${name}Create`,
+            edit: `${prefix}${name}Edit`,
+            index: `${prefix}${name}Index`,
+            show: `${prefix}${name}Show`
+        };
+    }
+
+    public buildRoutePath (path = ''): string {
+        return `${this.slug}/${path}`;
+    }
+
+    public getShowRoute (): RouteConfig {
+        return {
+            path: this.buildRoutePath(':id'),
             component: this.showComponent,
             name: this.actionNames.show,
             props: {
@@ -104,9 +131,9 @@ class RouteResource {
         };
     }
 
-    getCreateRoute (): RouteConfig {
+    public getCreateRoute (): RouteConfig {
         return {
-            path: `${this.slug}/create`,
+            path: this.buildRoutePath('create'),
             component: this.props.formComponent ?? (() => import('./views/ModelForm.vue')),
             name: this.actionNames.create,
             props: {
@@ -119,9 +146,9 @@ class RouteResource {
         };
     }
 
-    getEditRoute (): RouteConfig {
+    public getEditRoute (): RouteConfig {
         return {
-            path: `${this.slug}/:id/edit`,
+            path: this.buildRoutePath(':id/edit'),
             component: this.formComponent,
             name: this.actionNames.edit,
             props: {
@@ -134,21 +161,22 @@ class RouteResource {
         };
     }
 
-    getIndexRoute (): RouteConfig {
+    public getIndexRoute (): RouteConfig {
         return {
-            path: this.slug,
+            path: this.indexPath,
             component: this.indexComponent,
             name: this.actionNames.index,
             props: {
                 actionNames: this.actionNames,
-                customActions: this.props.customActions,
+                customActions: this.customActions,
                 handleAuthorizations: this.props.handleAuthorizations,
                 fields: this.detailsSchema,
                 resource: this.resource,
                 pageTitle: this.pageIndexTitle,
                 propertyTitleValue: this.propertyTitleValue,
                 searchSchema: this.props.searchSchema ?? [],
-                propertyImageValue: this.props.propertyImageValue
+                propertyImageValue: this.props.propertyImageValue,
+                routeResource: this
             },
             meta: {
                 enabled: true,
@@ -179,35 +207,66 @@ class RouteResource {
 
         this.prepareProps(dictionary);
 
-        dictionary.index.meta?.enabled && store.sidebarItems.push({
-            title: this.pageIndexTitle,
-            to: {
-                name: this.actionNames.index
-            }
-        });
-
         return dictionary;
+    }
+
+    addNested (icon: string, props: ResourceRouteConfig) {
+        const nested = new NestedRouteResource(this.slug, icon, props);
+        this.nesteds.push(nested);
+        return nested;
+    }
+}
+
+class NestedRouteResource extends RouteResource {
+    public readonly prefixPath: string;
+    public readonly icon: string;
+
+    constructor (path: string, icon: string, props: ResourceRouteConfig) {
+        super(props);
+        this.prefixPath = path;
+        this.icon = icon;
+    }
+
+    // public get indexPath () {
+    //     return [this.prefixPath, ':parentId', this.buildRoutePath('')].join('/');
+    // }
+
+    public buildRoutePath (path?: string): string {
+        return [this.prefixPath, ':parentId', this.slug, path].join('/');
+    }
+
+    addNested (icon: string, props: ResourceRouteConfig) {
+        const nested = new NestedRouteResource(this.slug, icon, props);
+        this.nesteds.push(nested);
+        return nested;
     }
 }
 
 class RouterRegistrar {
+    protected static pushLinks (routeResource: RouteResource) {
+        if (routeResource instanceof NestedRouteResource) return;
+
+        store.indexRoutes.push({
+            title: routeResource.pageIndexTitle,
+            to: {
+                name: routeResource.actionNames.index
+            }
+        });
+    }
+
     public static toRoutes (resources: RouteResource[]): RouteConfig[] {
         const routes = [];
-
         for (const resource of Object.values(resources)) {
+            this.pushLinks(resource);
             routes.push(...Object.values(resource.toDictionary()));
+            routes.push(...this.toRoutes(resource.nesteds));
         }
-
         return routes;
     }
 }
 
-function createRouteResource (config: ResourceRouteConfig): RouteConfigResourceDictionary {
-    return new RouteResource(config).toDictionary();
-}
-
 export {
-    createRouteResource,
     RouteResource,
+    NestedRouteResource,
     RouterRegistrar
 };

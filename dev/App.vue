@@ -32,7 +32,7 @@ export default {
 
     computed: {
         items () {
-            return store.sidebarItems;
+            return store.indexRoutes;
         },
 
         theme: {

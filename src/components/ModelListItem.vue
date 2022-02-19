@@ -11,12 +11,15 @@
             class="flex-grow-0"
         />
         <v-card-title class="pb-0">
-            <div
-                class="text-no-wrap text-truncate"
+            <router-link
+                v-if="hasPermission('show', showRoute)"
+                class="text-no-wrap text-truncate cursor-pointer"
                 :title="title"
+                :to="showRoute"
+                tag="div"
             >
                 {{ title }}
-            </div>
+            </router-link>
         </v-card-title>
 
         <div class="flex-grow-1 px-5">
@@ -26,61 +29,55 @@
             />
         </div>
 
-        <v-card-actions class="d-flex justify-space-between">
-            <span>
-                <v-chip
-                    v-if="date"
+        <v-card-actions>
+            <v-spacer />
+            <template v-for="(actionComponent, name) in customActions">
+                <slot
+                    v-if="hasPermission(name)"
+                    :name="name"
+                >
+                    <component
+                        :is="actionComponent"
+                        :key="name"
+                        v-bind="{ model, hasPermission, name }"
+                    />
+                </slot>
+            </template>
+            <slot
+                v-if="hasPermission('show', showRoute)"
+                name="showAction"
+            >
+                <v-btn
                     small
+                    icon
+                    title="Visualizar"
+                    :to="showRoute"
                 >
-                    {{ moment(date).format("DD/MM/YYYY") }}
-                </v-chip>
-            </span>
-            <div>
-                <template v-for="(actionComponent, name) in customActions">
-                    <slot :name="name">
-                        <component
-                            :is="actionComponent"
-                            :key="name"
-                            v-bind="{ model, hasPermission, name }"
-                        />
-                    </slot>
-                </template>
-                <slot
-                    v-if="hasPermission('show', showRoute)"
-                    name="showAction"
+                    <v-icon>mdi-alert-circle</v-icon>
+                </v-btn>
+            </slot>
+            <slot
+                v-if="hasPermission('edit', editRoute)"
+                name="editAction"
+            >
+                <v-btn
+                    icon
+                    :to="editRoute"
                 >
-                    <v-btn
-                        small
-                        icon
-                        title="Visualizar"
-                        :to="showRoute"
-                    >
-                        <v-icon>mdi-alert-circle</v-icon>
-                    </v-btn>
-                </slot>
-                <slot
-                    v-if="hasPermission('edit', editRoute)"
-                    name="editAction"
+                    <v-icon>mdi-pencil</v-icon>
+                </v-btn>
+            </slot>
+            <slot
+                v-if="hasPermission('remove') && currentRouteMeta.enableRemove"
+                name="removeAction"
+            >
+                <v-btn
+                    icon
+                    @click="remove"
                 >
-                    <v-btn
-                        icon
-                        :to="editRoute"
-                    >
-                        <v-icon>mdi-pencil</v-icon>
-                    </v-btn>
-                </slot>
-                <slot
-                    v-if="hasPermission('remove') && currentRouteMeta.enableRemove"
-                    name="removeAction"
-                >
-                    <v-btn
-                        icon
-                        @click="remove"
-                    >
-                        <v-icon>mdi-delete</v-icon>
-                    </v-btn>
-                </slot>
-            </div>
+                    <v-icon>mdi-delete</v-icon>
+                </v-btn>
+            </slot>
         </v-card-actions>
     </v-card>
 </template>
@@ -117,7 +114,7 @@ export default Vue.extend({
 
         title: {
             type: String,
-            required: true
+            default: null
         },
 
         image: {
