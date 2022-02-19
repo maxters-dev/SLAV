@@ -24,9 +24,7 @@
             "./node_modules/@types",
             "./node_modules/vuetify/types"
         ],
-        "paths": {
-
-        },
+     
         "lib": [
             "esnext",
             "dom",

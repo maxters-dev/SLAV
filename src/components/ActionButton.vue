@@ -10,7 +10,7 @@
 </template>
 
 <script lang="ts">
-import { Model } from 'src/types';
+import { Model } from '../../src/types';
 import Vue, { PropType } from 'vue';
 
 export default Vue.extend({
