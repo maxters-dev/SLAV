@@ -91,6 +91,7 @@
                     :length="models.last_page"
                     circle
                     class="mt-5"
+                    :total-visible="10"
                     @input="(page) => paginate(page)"
                 />
             </section>
