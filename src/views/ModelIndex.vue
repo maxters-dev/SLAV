@@ -115,10 +115,13 @@ export default modelIndex.extend({
     },
 
     methods: {
-        removeConfirmation (model: Model) {
-            (this.$refs.confirm as any).open({
-                text: ''
+        async removeConfirmation (model: Model) {
+            const ok: boolean = await (this.$refs.confirm as any).open({
+                text: 'Deseja remover o item selecionado?'
             });
+
+            if (!ok) return;
+
             this.remove(model);
         }
     }
