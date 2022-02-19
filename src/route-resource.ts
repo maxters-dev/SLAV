@@ -105,10 +105,10 @@ class RouteResource {
         const name = this.props.name;
 
         return {
+            show: `${prefix}${name}Show`,
             create: `${prefix}${name}Create`,
             edit: `${prefix}${name}Edit`,
-            index: `${prefix}${name}Index`,
-            show: `${prefix}${name}Show`
+            index: `${prefix}${name}Index`
         };
     }
 
@@ -227,10 +227,6 @@ class NestedRouteResource extends RouteResource {
         this.icon = icon;
     }
 
-    // public get indexPath () {
-    //     return [this.prefixPath, ':parentId', this.buildRoutePath('')].join('/');
-    // }
-
     public buildRoutePath (path?: string): string {
         return [this.prefixPath, ':parentId', this.slug, path].join('/');
     }
@@ -258,8 +254,8 @@ class RouterRegistrar {
         const routes = [];
         for (const resource of Object.values(resources)) {
             this.pushLinks(resource);
-            routes.push(...Object.values(resource.toDictionary()));
             routes.push(...this.toRoutes(resource.nesteds));
+            routes.push(...Object.values(resource.toDictionary()));
         }
         return routes;
     }
