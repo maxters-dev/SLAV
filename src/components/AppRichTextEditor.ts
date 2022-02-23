@@ -26,9 +26,14 @@ export function generateButtons () {
             id: 'italic'
         },
         {
-            icon: 'mdi-code-tags',
+            icon: 'mdi-code-braces',
             handler: createHandler('toggleCode'),
             id: 'code'
+        },
+        {
+            icon: 'mdi-code-tags',
+            handler: createHandler('toggleCodeBlock'),
+            id: 'code-block'
         },
         {
             icon: 'mdi-format-vertical-align-center',
