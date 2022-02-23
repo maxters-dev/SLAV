@@ -74,12 +74,6 @@ class RouteResource {
         return this.props.propertyTitleValue ?? 'name';
     }
 
-    get propertyPageShowTitle (): string {
-        return this.props.singularTitle
-            ? `Detalhes ${genderOfWord(this.props.singularTitle) === 'f' ? 'da' : 'do'} ${this.props.singularTitle}`
-            : 'Detalhes';
-    }
-
     public get indexPath () {
         return this.buildRoutePath('');
     }
@@ -123,7 +117,7 @@ class RouteResource {
             name: this.actionNames.show,
             props: {
                 propertyTitleValue: this.propertyTitleValue,
-                pageTitle: this.propertyPageShowTitle,
+                pageTitle: this.pageShowTitle,
                 resource: this.resource,
                 fields: this.fullDetailsSchema
             },

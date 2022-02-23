@@ -22,7 +22,7 @@
 <script lang="ts">
 import Vue, { PropType } from 'vue';
 import Resource from '../services/resource';
-import { FieldViewSchema } from '../types/schema';
+import { FieldViewListSchema } from '../types/schema';
 import { Model } from '../types/laravel';
 import ModelDescriptionList from '../components/ModelDescriptionList.vue';
 
@@ -35,7 +35,7 @@ export default Vue.extend({
             required: true
         },
         fields: {
-            type: [Array, Function] as PropType<FieldViewSchema[]>,
+            type: [Array, Function] as PropType<FieldViewListSchema>,
             required: true
         },
         resource: {
