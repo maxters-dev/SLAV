@@ -35,7 +35,7 @@ export default Vue.extend({
             required: true
         },
         fields: {
-            type: Array as PropType<FieldViewSchema[]>,
+            type: [Array, Function] as PropType<FieldViewSchema[]>,
             required: true
         },
         resource: {

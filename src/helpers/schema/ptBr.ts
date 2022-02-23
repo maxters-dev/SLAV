@@ -1,4 +1,4 @@
-import { FieldViewListSchema } from '../../types/schema';
+import { FieldViewSchema } from '../../types/schema';
 import moment from 'moment';
 
 const yesOrNot = (value: boolean) => (value ? 'Sim' : 'Não');
@@ -11,7 +11,7 @@ const dateTimeFormatter = (date: string) => {
     return moment(date).format('DD/MM/YYYY HH:mm');
 };
 
-const addTimestampsFields = (fields: FieldViewListSchema) => {
+const addTimestampsFields = (fields: FieldViewSchema[]) => {
     fields.push(
         {
             name: 'created_at',

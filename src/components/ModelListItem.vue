@@ -103,7 +103,7 @@ export default Vue.extend({
         },
 
         fields: {
-            type: Array,
+            type: [Array, Function],
             default: () => [{ name: 'name', title: 'Name' }]
         },
 
@@ -144,6 +144,7 @@ export default Vue.extend({
         currentRouteMeta (): RouteMeta {
             return this.$route.meta ?? {};
         }
+
     },
 
     methods: {

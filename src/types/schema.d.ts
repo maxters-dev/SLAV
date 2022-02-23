@@ -10,7 +10,7 @@ export type FieldViewSchema = {
     format?: (value: any, model: Record<string, any>) => string | string[] | number;
 };
 
-export type FieldViewListSchema = FieldViewSchema[]
+export type FieldViewListSchema = FieldViewSchema[] | ((config: InsideComponentParams) => FieldViewSchema[]);
 
 export type InputSchemaProperties = {
     name: string;

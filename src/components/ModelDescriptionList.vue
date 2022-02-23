@@ -75,7 +75,7 @@
 
 <script lang="ts">
 import Vue, { PropType } from 'vue';
-import { FieldViewSchema } from '../types/schema';
+import { FieldViewListSchema, FieldViewSchema } from '../types/schema';
 import { Model } from '../types/laravel';
 import { getModelPropValue } from '../helpers';
 
@@ -89,7 +89,7 @@ export default Vue.extend({
     name: 'ModelDescriptionList',
     props: {
         fields: {
-            type: Array as PropType<FieldViewSchema[]>,
+            type: [Array, Function] as PropType<FieldViewListSchema>,
             required: true
         },
 
@@ -101,7 +101,11 @@ export default Vue.extend({
 
     computed: {
         computedFields (): FieldResult[] {
-            return this.fields.map((field): FieldResult => {
+            const fields = typeof this.fields === 'function'
+                ? this.fields({ model: this.model, component: this })
+                : this.fields;
+
+            return fields.map((field): FieldResult => {
                 return {
                     title: field.title,
                     type: field.type,

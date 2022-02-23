@@ -51,7 +51,7 @@ export const props = {
     },
 
     fields: {
-        type: Array as PropType<IndexRouteProps['fields']>,
+        type: [Array, Function] as PropType<IndexRouteProps['fields']>,
         required: true
     },
 
