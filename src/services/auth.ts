@@ -19,22 +19,32 @@ export interface AuthService {
     removeToken(): void;
 }
 
-export const authSessionService: AuthService = {
+export const authSessionService: AuthService & { tokenKey: string, loginEndpoint: string, loggedUserEndpoint: string } = {
+
+    tokenKey: TOKEN_KEY,
+
+    loginEndpoint: 'users/login',
+
+    loggedUserEndpoint: 'users/me',
+
     getToken (): string | null {
-        return sessionStorage.getItem(TOKEN_KEY);
+        return localStorage.getItem(this.tokenKey);
     },
+
     setToken (value: string) {
-        sessionStorage.setItem(TOKEN_KEY, value);
+        localStorage.setItem(this.tokenKey, value);
         return this;
     },
+
     removeToken (): void {
-        sessionStorage.removeItem(TOKEN_KEY);
+        localStorage.removeItem(this.tokenKey);
     },
+
     async getUser (enableCache = false): Promise<AuthUser> {
         if (enableCache === true && cachedUser) {
             return cachedUser;
         }
-        const { data } = await api.get('users/me');
+        const { data } = await api.get(this.loggedUserEndpoint);
         cachedUser = data as AuthUser;
         setTimeout(() => { cachedUser = null; }, 1000 * 60 * 5);
         return cachedUser;
@@ -44,8 +54,8 @@ export const authSessionService: AuthService = {
         this.removeToken();
     },
 
-    async attempt (email: string, password: string): Promise<any> {
-        const { data } = await api.post('users/login', { email, password });
+    async attempt (email: string, password: string): Promise<AuthUser> {
+        const { data } = await api.post(this.loginEndpoint, { email, password });
         return data as AuthUser;
     },
 
