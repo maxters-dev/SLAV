@@ -16,22 +16,24 @@
         "@tiptap/extension-image": "^2.0.0-beta.24",
         "@tiptap/starter-kit": "^2.0.0-beta.171",
         "@tiptap/vue-2": "^2.0.0-beta.75",
+        "@types/prismjs": "^1.26.0",
         "autoprefixer": "^9",
         "axios": "^0.23.0",
         "core-js": "^3.6.5",
         "moment": "^2.29.1",
         "postcss": "^7",
+        "prismjs": "~1.15.0",
         "slugify": "^1.6.1",
         "tslib": "^2.3.1",
         "vue": "^2.6.11",
         "vue-class-component": "^7.2.6",
         "vue-feather-icons": "^5.1.0",
+        "vue-prism-editor": "^1.0.1",
         "vue-property-decorator": "^9.1.2",
         "vue-router": "^3.5.3",
         "vuetify": "^2.4.0"
     },
     "devDependencies": {
-        "lint-staged": "^12.3.5",
         "@typescript-eslint/eslint-plugin": "^5.10.2",
         "@typescript-eslint/parser": "^5.10.2",
         "@vue/cli-plugin-babel": "^4.5.15",
@@ -51,6 +53,7 @@
         "eslint-plugin-promise": "^5.2.0",
         "eslint-plugin-vue": "^8.4.0",
         "husky": "^7.0.0",
+        "lint-staged": "^12.3.5",
         "prettier": "^2.2.1",
         "sass": "~1.32.0",
         "sass-loader": "^10.0.0",
@@ -63,7 +66,6 @@
     "types": "types/index.d.ts",
     "main": "./index.ts",
     "productionSourceMap": false,
-
     "lint-staged": {
         "*.{ts,js,vue}": "eslint --cache --fix"
     }

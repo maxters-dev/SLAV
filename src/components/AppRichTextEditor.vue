@@ -47,7 +47,12 @@
             </v-layout>
         </div>
         <section v-if="isHtmlMode">
-            <v-textarea v-model="modelValue" />
+            <prism-editor
+                v-model="modelValue"
+                :highlight="highlighter"
+                :tab-size="4"
+                class="code-editor"
+            />
         </section>
         <section v-else>
             <v-card class="mb-5">
@@ -86,9 +91,18 @@
 <script lang="ts">
 import Vue from 'vue';
 
+import { PrismEditor } from 'vue-prism-editor';
+import 'vue-prism-editor/dist/prismeditor.min.css';
+
+import { highlight, languages } from 'prismjs';
+
+import 'prismjs/components/prism-javascript';
+import 'prismjs/themes/prism-okaidia.css';
+
 import { Editor, EditorContent } from '@tiptap/vue-2';
 
 import StarterKit from '@tiptap/starter-kit';
+import Paragraph from '@tiptap/extension-paragraph';
 import Image from '@tiptap/extension-image';
 
 import { CommandButton, generateButtons } from './AppRichTextEditor';
@@ -106,6 +120,7 @@ export default Vue.extend({
 
     components: {
         EditorContent,
+        PrismEditor,
         AppImageUpload
     },
 
@@ -162,7 +177,14 @@ export default Vue.extend({
     mounted () {
         this.editor = new Editor({
             content: this.value,
-            extensions: [StarterKit, Image],
+            extensions: [StarterKit, Image, Paragraph.extend({
+                parseHTML () {
+                    return [{ tag: 'div' }];
+                },
+                renderHTML ({ HTMLAttributes }) {
+                    return ['div', HTMLAttributes, 0];
+                }
+            })],
             onUpdate: () => {
                 this.$emit('input', this.computedEditor.getHTML());
             }
@@ -184,6 +206,9 @@ export default Vue.extend({
 
         handleSelectImage (imageFile: File) {
             this.$emit('imageSelected', imageFile);
+        },
+        highlighter (code: string) {
+            return highlight(code, languages.html, 'html'); // languages.<insert language> to return html with markup
         }
     }
 });
@@ -191,6 +216,14 @@ export default Vue.extend({
 
 <style lang="scss" scoped>
 /* Basic editor styles */
+
+.code-editor{
+    background-color: #0d0d0d;
+    color: #f1f1f1;
+    white-space: pre;
+    padding: 1rem;
+    margin-bottom: 1rem;
+}
 
 ::v-deep .ProseMirror {
     outline: none;
