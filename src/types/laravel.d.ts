@@ -1,5 +1,5 @@
 /* eslint-disable camelcase */
-export type Payload = Record<string, number | string>;
+export type Payload = Record<string, number | string> | FormData;
 
 export type Model = {
     id: number;
