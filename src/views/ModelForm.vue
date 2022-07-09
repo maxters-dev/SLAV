@@ -59,7 +59,7 @@ import Resource from '../services/resource';
 import { FormSchema, InputSchema, InputSchemaProperties } from '../types/schema';
 import ModelFormField from '../components/ModelFormField.vue';
 import { getModelPropValue, setModelPropValue } from '../helpers';
-import { Model } from '../types/laravel';
+import { Model, Payload } from '../types/laravel';
 
 export default Vue.extend({
     name: 'ModelForm',
@@ -84,7 +84,9 @@ export default Vue.extend({
         indexRoute: {
             type: String,
             required: true
-        }
+        },
+
+        hasUpload: Boolean
     },
 
     data () {
@@ -139,14 +141,36 @@ export default Vue.extend({
             return this.formSchema;
         },
 
+        prepareData (model: any): Payload {
+            if (!this.hasUpload) return model;
+
+            const form = new FormData();
+
+            Object.entries(model).forEach(([key, value]) => {
+                if (value === undefined) {
+                    form.append(key, '');
+                } else if (typeof value === 'boolean') {
+                    form.append(key, value ? '1' : '0');
+                } else if (value instanceof File) {
+                    form.append(key, value, value.name);
+                } else {
+                    form.append(key, value as string | Blob);
+                }
+            });
+
+            return form;
+        },
+
         async save () {
             this.loading.saving = true;
 
+            const payload = this.prepareData(this.model);
+
             try {
                 if (this.id) {
-                    await this.resource.update(this.id, this.model);
+                    await this.resource.update(this.id, payload);
                 } else {
-                    await this.resource.create(this.model);
+                    await this.resource.create(payload);
                 }
             } finally {
                 this.loading.saving = false;

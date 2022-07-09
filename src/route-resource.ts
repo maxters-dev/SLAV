@@ -134,7 +134,8 @@ class RouteResource {
                 indexRoute: this.actionNames.index,
                 formSchema: this.formSchema,
                 pageTitle: this.pageCreateTitle,
-                resource: this.resource
+                resource: this.resource,
+                hasUpload: this.props.hasUpload
             },
             meta: { enabled: this.props.create !== false }
         };
@@ -149,7 +150,8 @@ class RouteResource {
                 formSchema: this.formSchema,
                 indexRoute: this.actionNames.index,
                 pageTitle: this.pageEditTitle,
-                resource: this.resource
+                resource: this.resource,
+                hasUpload: this.props.hasUpload
             },
             meta: { enabled: this.props.edit !== false }
         };

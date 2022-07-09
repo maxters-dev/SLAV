@@ -68,6 +68,7 @@ export interface ResourceRouteConfig {
     indexComponent?: Component;
     showComponent?: Component;
     formComponent?: Component;
+    hasUpload?: boolean;
 }
 
 export type EditRouteProps = FormRouteProps;
