@@ -46,7 +46,7 @@ export const props = {
     },
 
     propertyImageValue: {
-        type: String as PropType<ResourceRouteConfig['propertyImageValue']>,
+        type: [String, Function] as PropType<ResourceRouteConfig['propertyImageValue']>,
         default: null
     },
 

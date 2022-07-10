@@ -57,7 +57,7 @@ export interface ResourceRouteConfig {
     show?: ((props: ShowRouteProps) => ShowRouteProps) | false;
     remove?: boolean;
     propertyTitleValue?: string | ((value: any) => string);
-    propertyImageValue?: string;
+    propertyImageValue?: string | ((value: any) => string);
     singularTitle?: string;
     pluralTitle?: string;
     fullDetailsSchema?: FieldViewListSchema;
