@@ -10,7 +10,7 @@
             >
                 <template v-if="!isHtmlMode">
                     <v-flex
-                        v-for="(button, key) in buttons"
+                        v-for="(button, key) in editorActions"
                         :key="key"
                         shrink
                         class="px-2"
@@ -19,7 +19,7 @@
                             fab
                             x-small
                             :color="
-                                isActiveButton(button.id) ? 'primary' : null
+                                isActiveAction(button.id) ? 'primary' : null
                             "
                             @click="
                                 () =>
@@ -89,7 +89,7 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import Vue, { PropType } from 'vue';
 
 import { PrismEditor } from 'vue-prism-editor';
 import 'vue-prism-editor/dist/prismeditor.min.css';
@@ -102,7 +102,6 @@ import 'prismjs/themes/prism-okaidia.css';
 import { Editor, EditorContent } from '@tiptap/vue-2';
 
 import StarterKit from '@tiptap/starter-kit';
-import Paragraph from '@tiptap/extension-paragraph';
 import Image from '@tiptap/extension-image';
 
 import { CommandButton, generateButtons } from './AppRichTextEditor';
@@ -111,7 +110,7 @@ import AppImageUpload from './AppImageUpload.vue';
 type Data = {
     editor?: Editor;
     isHtmlMode: boolean;
-    buttons: CommandButton[];
+    editorActions: CommandButton[];
     dialogImage: boolean;
 }
 
@@ -132,16 +131,20 @@ export default Vue.extend({
         label: {
             type: String,
             default: ''
+        },
+
+        beforeActions: {
+            type: Function as PropType<(actions: CommandButton[], editor: Editor) => void | null>,
+            default: null
         }
+
     },
 
     data (): Data {
-        const buttons = generateButtons();
-
         return {
             editor: undefined,
             isHtmlMode: false as boolean,
-            buttons,
+            editorActions: [],
             dialogImage: false
         };
     },
@@ -177,18 +180,22 @@ export default Vue.extend({
     mounted () {
         this.editor = new Editor({
             content: this.value,
-            extensions: [StarterKit, Image, Paragraph.extend({
-                parseHTML () {
-                    return [{ tag: 'div' }];
-                },
-                renderHTML ({ HTMLAttributes }) {
-                    return ['div', HTMLAttributes, 0];
-                }
-            })],
+            extensions: [
+                StarterKit,
+                Image
+            ],
             onUpdate: () => {
                 this.$emit('input', this.computedEditor.getHTML());
             }
         });
+
+        const editorActions = generateButtons();
+
+        if (this.beforeActions) {
+            this.beforeActions(editorActions, this.editor);
+        }
+
+        this.editorActions = editorActions;
     },
 
     beforeDestroy () {
@@ -196,7 +203,7 @@ export default Vue.extend({
     },
 
     methods: {
-        isActiveButton (arg: any): boolean {
+        isActiveAction (arg: any): boolean {
             if (Array.isArray(arg)) {
                 return !!this.computedEditor.isActive(arg[0], arg[1]);
             }
