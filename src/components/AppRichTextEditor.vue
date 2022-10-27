@@ -103,6 +103,10 @@ import { Editor, EditorContent } from '@tiptap/vue-2';
 
 import StarterKit from '@tiptap/starter-kit';
 import Image from '@tiptap/extension-image';
+import Table from '@tiptap/extension-table';
+import TableCell from '@tiptap/extension-table-cell';
+import TableHeader from '@tiptap/extension-table-header';
+import TableRow from '@tiptap/extension-table-row';
 
 import { CommandButton, generateButtons } from './AppRichTextEditor';
 import AppImageUpload from './AppImageUpload.vue';
@@ -182,7 +186,11 @@ export default Vue.extend({
             content: this.value,
             extensions: [
                 StarterKit,
-                Image
+                Image,
+                Table,
+                TableRow,
+                TableHeader,
+                TableCell
             ],
             onUpdate: () => {
                 this.$emit('input', this.computedEditor.getHTML());
@@ -224,7 +232,7 @@ export default Vue.extend({
 <style lang="scss" scoped>
 /* Basic editor styles */
 
-.code-editor{
+.code-editor {
     background-color: #0d0d0d;
     color: #f1f1f1;
     white-space: pre;
@@ -235,7 +243,7 @@ export default Vue.extend({
 ::v-deep .ProseMirror {
     outline: none;
 
-    > * + * {
+    >*+* {
         margin-top: 0.75em;
     }
 
@@ -288,5 +296,33 @@ export default Vue.extend({
         border-top: 2px solid rgba(#0d0d0d, 0.1);
         margin: 2rem 0;
     }
+
+    table {
+        border-collapse: collapse;
+        table-layout: fixed;
+        width: 100%;
+        margin: 0;
+        overflow: hidden;
+
+        td,
+        th {
+            min-width: 1em;
+            border: 1px solid #ced4da;
+            padding: 3px 5px;
+            vertical-align: top;
+            box-sizing: border-box;
+            position: relative;
+
+            >* {
+                margin-bottom: 0;
+            }
+        }
+
+        th {
+            font-weight: bold;
+            text-align: left;
+        }
+    }
+
 }
 </style>
