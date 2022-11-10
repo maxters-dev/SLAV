@@ -50,5 +50,19 @@ export function generateButtons () {
         });
     }
 
+    ['left', 'right', 'center', 'justify'].forEach((align) => {
+        buttons.push({
+            icon: 'mdi-format-align-' + align,
+            handler: createHandler('setTextAlign', align),
+            id: ['align', { align }]
+        });
+    });
+
+    // buttons.push({
+    //     icon: 'mdi-format-clear',
+    //     handler: createHandler('unsetTextAlign'),
+    //     id: 'unsetTextAlign'
+    // });
+
     return buttons;
 }

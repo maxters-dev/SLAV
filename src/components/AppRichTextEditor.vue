@@ -107,6 +107,7 @@ import Table from '@tiptap/extension-table';
 import TableCell from '@tiptap/extension-table-cell';
 import TableHeader from '@tiptap/extension-table-header';
 import TableRow from '@tiptap/extension-table-row';
+import TextAlign from '@tiptap/extension-text-align';
 
 import { CommandButton, generateButtons } from './AppRichTextEditor';
 import AppImageUpload from './AppImageUpload.vue';
@@ -190,7 +191,10 @@ export default Vue.extend({
                 Table,
                 TableRow,
                 TableHeader,
-                TableCell
+                TableCell,
+                TextAlign.configure({
+                    types: ['heading', 'paragraph']
+                })
             ],
             onUpdate: () => {
                 this.$emit('input', this.computedEditor.getHTML());
